@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CAI Library</title>
+    <style type="text/css">
+        /* Themes */
+        :root {
+            --body-bg: #f5f8fa;
+            --border-color: #efefef;
+            --messagebox-bg: #ffffff;
+            --messagebox-shadow: rgba(0, 0, 0, 0.1);
+            --font-color: #1f1f1f;
+            --rgba-1: rgba(0, 0, 0, 0.05);
+            --rgba-2: rgba(0, 0, 0, 0.1);
+        }
+
+        .dark_mode {
+            --body-bg: #343434;
+            --border-color: #4f4f4f;
+            --messagebox-bg: #474747;
+            --messagebox-shadow: rgba(0, 0, 0, 0);
+            --font-color: #ededed;
+            --rgba-1: rgba(255, 255, 255, 0.06);
+            --rgba-2: rgba(255, 255, 255, 0.2);
+        }
+
+
+
+        * {
+            box-sizing: border-box;
+        }
+
+        button,
+        select,
+        img {
+            user-select: none;
+        }
+
+        ol,
+        ul,
+        li,
+        a,
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6,
+        p {
+            text-decoration: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .italic {
+            font-style: italic;
+        }
+
+        .bold {
+            font-weight: bold;
+        }
+
+        .bold-italic {
+            font-weight: bold;
+            font-style: italic;
+        }
+
+        html {
+            font-size: 14px;
+        }
+
+        body {
+            padding: 0;
+            margin: 0;
+            background-color: var(--body-bg);
+            color: var(--font-color);
+        }
+
+        .content-cont {
+            display: flex;
+            flex-direction: row;
+        }
+
+
+        /* NAV / Drawer */
+
+        @keyframes slideIn {
+            0% {
+                opacity: 0;
+                left: -200px;
+            }
+
+            100% {
+                opacity: 1;
+                left: 0;
+            }
+        }
+
+        .drawer-cont.active {
+            display: block;
+        }
+
+        .drawer-cont {
+            display: none;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.6);
+        }
+
+        nav {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            max-width: 80%;
+            background-color: var(--body-bg);
+
+            display: flex;
+            flex-direction: column;
+            padding: 10px 0;
+            overflow: hidden;
+            animation: slideIn 0.2s ease-in-out;
+            -webkit-box-shadow: 4px 0px 15px 0px rgba(0, 0, 0, 0.2);
+            -moz-box-shadow: 4px 0px 15px 0px rgba(0, 0, 0, 0.2);
+            box-shadow: 4px 0px 15px 0px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-header {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            padding: 0 10px 0 20px;
+            margin-bottom: 20px;
+            gap: 10px;
+        }
+
+        .close_drawer-btn {
+            align-self: flex-end;
+            padding: 10px;
+            transition: background-color 0.1s ease-in-out;
+            cursor: pointer;
+            border-radius: 8px;
+        }
+
+        .close_drawer-btn:hover {
+            background-color: var(--rgba-1);
+        }
+
+        .close_drawer-btn svg {
+            display: flex;
+            width: 30px;
+            height: 30px;
+            color: var(--font-color);
+        }
+
+        /*.nav-new_char-btn {
+            align-self: flex-start;
+            outline: none;
+            border: none;
+            color: #ffffff;
+            border-radius: 6px;
+            padding: 10px 20px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            background-color: #4e9733;
+            transition: background-color 0.1s ease-in-out;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+        }
+
+        .nav-new_char-btn:hover {
+            background-color: #6ba755;
+        }*/
+
+        .history_list-header {
+            font-size: 1.5rem;
+            padding: 10px 20px;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+            margin-bottom: 10px;
+        }
+
+        .history_list {
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .history_item {
+            transition: background-color 0.1s ease-in-out;
+            padding: 20px 30px 20px 20px;
+            cursor: pointer;
+            border-bottom: 1px solid var(--rgba-2);
+        }
+
+        .history_item:first-child {
+            border-top: 1px solid var(--rgba-2);
+        }
+
+        .history_item:hover {
+            background-color: var(--rgba-1);
+        }
+
+        .history_item p {
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        /*nav .char-item {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 10px;
+            transition: background-color 0.1s ease-in-out;
+            padding: 10px 40px 10px 20px;
+            cursor: pointer;
+        }
+
+        nav .char-item:hover {
+            background-color: var(--rgba-1);
+        }
+
+        nav .nav-avatar-wrap {
+            width: 40px;
+            height: 40px;
+        }
+
+        nav .nav-avatar-wrap img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+        }
+
+        nav .char-item span {
+            font-size: 1.3rem;
+            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+        }*/
+
+        /* MAIN */
+        main {
+            display: flex;
+            flex-direction: column;
+            padding: 0 4%;
+            width: 100%;
+        }
+
+        /* HEADER */
+        header {
+            padding: 6px 6px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .open_drawer-wrap svg {
+            display: flex;
+            width: 46px;
+            height: 46px;
+            color: var(--font-color);
+        }
+
+
+        .theme_switch {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+        }
+
+        .theme_switch span {
+            font-size: 1.1rem;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+        }
+
+        .tswitch_box[type=checkbox] {
+            height: 0;
+            width: 0;
+            visibility: hidden;
+            position: absolute;
+        }
+
+        .tswitch_label {
+            cursor: pointer;
+            text-indent: -9999px;
+            width: 60px;
+            height: 30px;
+            display: block;
+            border-radius: 15px;
+            position: relative;
+            border: 1px solid #323232;
+            background: #f5f8fa;
+        }
+
+        .tswitch_label:after {
+            content: '';
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50px;
+            transition: 0.2s;
+            background: #323232;
+        }
+
+        .tswitch_box:checked+label {
+            background: #323232;
+            border: 1px solid #f5f8fa;
+        }
+
+        .tswitch_box:checked+label:after {
+            left: calc(100% - 5px);
+            transform: translateX(-100%);
+            background: #f5f8fa;
+        }
+
+        .tswitch_label:active:after {
+            width: 25px;
+        }
+
+        /*.update_current_char-btn {
+            margin-left: auto;
+            outline: none;
+            border: none;
+            color: #ffffff;
+            border-radius: 6px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            align-self: center;
+            cursor: pointer;
+            background-color: #336c97;
+            transition: background-color 0.1s ease-in-out;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+        }
+
+        .update_current_char-btn:hover {
+            background-color: #5f829d;
+        }*/
+
+
+        /* CONVERSATION */
+        .character_name-cont {
+            text-align: center;
+            padding: 20px 10px;
+        }
+
+        .character_name-cont h3 {
+            font-size: 1.3rem;
+            font-weight: 400;
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
+        }
+
+        .chat {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            align-self: center;
+            padding-bottom: 30px;
+        }
+
+        .chat_message-item {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .chat .avatar-wrap {
+            flex-shrink: 0;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            overflow: hidden;
+        }
+
+        .chat .avatar-wrap>* {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+        }
+
+        .chat .avatar-wrap .no_avatar-user {
+            background-color: #5157cf;
+        }
+
+        .chat .avatar-wrap .no_avatar-char {
+            background-color: #e20909;
+        }
+
+        .chat .chat_content-wrap {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px var(--messagebox-shadow);
+            background-color: var(--messagebox-bg);
+            overflow: hidden;
+        }
+
+        .chat .chat_content-wrap h5 {
+            font-size: 1rem;
+            font-weight: bold;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .chat .chat_content-wrap .message-wrap {
+            font-size: 1rem;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+
+        @media (min-width: 576px) {}
+
+        @media (min-width: 768px) {
+            html {
+                font-size: 16px;
+            }
+
+            nav {
+                min-width: 40%;
+            }
+
+            header {
+                padding: 14px 20px;
+            }
+
+            .open_drawer-wrap {
+                padding: 4px;
+                cursor: pointer;
+                border-radius: 6px;
+                transition: background-color 0.1s ease-in-out;
+            }
+
+            .open_drawer-wrap:hover {
+                background-color: var(--rgba-1);
+            }
+
+            .chat {
+                width: 80%;
+            }
+
+            .chat .chat_content-wrap {
+                padding: 14px;
+            }
+        }
+
+        @media (min-width: 992px) {
+            .chat {
+                width: 70%;
+            }
+        }
+
+        @media (min-width: 1200px) {}
+
+        @media (min-width: 1400px) {}
+    </style>
+</head>
+
+<body>
+    <template id="message_item_template">
+        <div class="chat_message-item">
+            <div class="avatar-wrap">
+
+            </div>
+            <div class="chat_content-wrap">
+                <h5>
+
+                </h5>
+                <div class="message-wrap">
+                    <p>
+
+                    </p>
+                </div>
+            </div>
+        </div>
+    </template>
+    <div class="content-cont">
+        <div class="drawer-cont">
+            <nav>
+                <div class="nav-header">
+                    <div class="close_drawer-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                            class="bi bi-x-lg" viewBox="0 0 16 16">
+                            <path
+                                d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z" />
+                        </svg>
+                    </div>
+                </div>
+                <div class="history_list-header">
+                    <span>History</span>
+                </div>
+                <div class="history_list" id="history_list">
+
+                </div>
+            </nav>
+        </div>
+        <main>
+            <header>
+                <div class="open_drawer-wrap">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                        class="bi bi-list" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd"
+                            d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z" />
+                    </svg>
+                </div>
+
+                <div class="theme_switch">
+                    <span>Dark Mode:</span>
+                    <input type="checkbox" class="tswitch_box" id="tswitch_box" />
+                    <label for="tswitch_box" class="tswitch_label">Toggle</label>
+                </div>
+            </header>
+            <div class="character_name-cont">
+                <h3>---</h3>
+            </div>
+            <div class="chat" id="chat">
+
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Get body for future use
+            const body = document.querySelector('body');
+
+            // Handle theme
+            const themeSwitcher = document.querySelector('.tswitch_box[type=checkbox]');
+            const cachedTheme = localStorage.getItem('cait_readoffline_theme');
+            if (cachedTheme === "dark_mode") {
+                body.classList.add('dark_mode');
+                themeSwitcher.checked = true;
+            }
+            themeSwitcher.addEventListener('change', (e) => {
+                if (e.target.checked) {
+                    body.classList.add('dark_mode');
+                    localStorage.setItem('cait_readoffline_theme', 'dark_mode');
+                } else {
+                    body.classList.remove('dark_mode');
+                    localStorage.setItem('cait_readoffline_theme', 'light_mode');
+                }
+            })
+
+            // Open and close drawer
+            const drawerCont = document.querySelector('.drawer-cont');
+            const openDrawerBtn = document.querySelector('.open_drawer-wrap');
+            const openDrawer = () => {
+                drawerCont.classList.add('active');
+            }
+            const closeDrawer = () => {
+                drawerCont.classList.remove('active');
+            }
+            openDrawerBtn.addEventListener('click', () => {
+                openDrawer();
+            });
+            document.querySelector('.close_drawer-btn').addEventListener('click', () => {
+                closeDrawer();
+            });
+            document.querySelector('.drawer-cont').addEventListener('click', (e) => {
+                // Allows closing from clicking on outside
+                if (e.target.closest('nav')) {
+                    return;
+                }
+                closeDrawer();
+            });
+            // ---------
+
+            // This is replaced by the extension when downloading
+            const historyData = JSON.parse(`{"charPic":"data:image/avif;base64,AAAAGGZ0eXBhdmlmAAAAAG1pZjFtaWFmAAAA0m1ldGEAAAAAAAAAIWhkbHIAAAAAAAAAAHBpY3QAAAAAAAAAAAAAAAAAAAAADnBpdG0AAAAAAAEAAAAeaWxvYwAAAABEAAABAAEAAAABAAAA8gAACXkAAAAjaWluZgAAAAAAAQAAABVpbmZlAgAAAAABAABhdjAxAAAAAFZpcHJwAAAAOGlwY28AAAAUaXNwZQAAAAAAAABQAAAAUAAAAAxhdjFDgT9AAAAAABBwaXhpAAAAAAMKCgoAAAAWaXBtYQAAAAAAAAABAAEDAYIDAAAJgW1kYXQSAAoJP9mnzy8BDQbQMukSZGyO0MlF/r9oD9QH/gIDAQMAggAAABZE1cEEEVDYPf1YZGr7nyo+6RRkHivIPfYuA5JdjPMGh0aLkUF1xEDcPSkuQv1PRFzuzdlt5fNPkYPTEJPrpY70ZK8dAHKur26vfK9PIIForHXn9nYhCRKZDCM1fVv+F6Z4GAbuH5LRPJ18+630dc5Ahe/hBRoBC/d11mk4rWlbik/ayQq1sYt6LUHa3k6dqW0O+gBtHA7LeQqOY7V/wyK4LgD7+K6UGRRLso/ZFCpyWpWBwUG+b3dq/yowsSM1Lw7obuKKFpRXLbaatmqdOl5iM8ozc1g2hCs/a5kzOH1dcIPOm0g6dWv87l+1o2GFWpBNBPQ1Q//ieU8m80FHKwpl+Xz5mg1uWrsOEbBE6LJ+5iJF5GoDwTD/2gmd5thZjOAG82hvCZ08LygE2S9iCIHlse+K30KGirWSwMEuBqHyPdu0SXCytjdE4AqpSf6Cw9MpuMlu/+Ew0+rOJl7Rj22eN76D9u6++rDVQlhrvosle784EgrAUuUWNK1giqHKQYMGTI+hOpkEm6XhlCyRnrt/21ez4BNZ0OhCz+nkZ/27ncGSSg/ubfftc+V9i9aESai2AieptNi4GpbtduX/3uQ9Q1LHNJMn9Jt4/rqo9pHDLHNCzoOqfBkYpXbSq/UsPL/Pi9KridzmfsNHCvZqiGUNa4+Ywc/N1scYzMG8HOeuYbXiDkyjVJQVQ37pQz4rXnTk1o8Ra0JP7FrY9ym9cwnTBAw/uz2ybo/7CFJG9J61Gix2AHgNPshQUT22MnNsJ/ebxYOnDRXv62g2IUT5/MIBn+8ZqWpEc6UATQK2vqJ9TLjY03nb998W5LUZKaq6m1bzFeq+0KufOmxjh7RBBuS2riyiSLY7sI3GJ4V7AeeSNobL6W3N7dtwvmHNcK6TPn4Ec4/yBCPgMWiJkNt9yGI6chbDQKF/mwtDksfyHz6Tu62H342MXkQUWt7rAh+svQTqAm95IPvCSX1XpkiIV0sqYQXjFOMX63+NCj0aVIiqZVoeXGUfAqgbijmfePkLPh1HJkjAc4KUtMQPbtpQZiarH+93BZuj7PRpWS8QYCoIpZc9OjxTs0/LPdaYI+USZr0uGQE6LgWN3OXcNbbpZa872QRZnv97bhFZcbKON1GpDdLqqBVJcyebfdw+9vnbUcS0qXF+Sa1MfySQX13isKpQwU2BsCm9J62qrCopCXPuWf/9+9dmGc1UAvXbuXMTqqq55EU5XmU/nX3/XpyrZpgF9y9s0BtJiwZpsRv/y22qGwdWVEbRKwQkdvvKbxQfQvK8l17H1+1ZE2lPk3JccPs7JvXlJuu1yk+7d+HCbp69BEiTNddfWfc0ymBNJb+Lk5vJXffHj9yhSKTndOjKhD4+pR4g5gayrNCWCyVPHnYKb4jb1kqxtQXRh8ztC+AvwIY/9eP9KZtR6GqydlJcPLC8wOCUxma0bIyRSJzQY09r1mADrxyuQyCDlL1ZMt34qyQrhNBqGsSeqKHVtqAn+1jTXLrAFU90iKa+C1rR85tvWgIgwtE2l9+MuX0MoL2EmydBab1aupwMYfJ4Md77bT1yNeRD2mKrCdRapymogYGSvqlVhEEB7yhHVTFEjtfLSy1nzquFQeYpnc9T5epjVVD5glnRjIp4BOGKB/1ndV+gampCj/i5vf8ttd9r59tvs+cYrQgxQ1e4LFuK9lCKhZAB7ainvNJpmJmXR8jzRq/S+NwmzwJ3I9lOzXsb/305Uubd/u3Sew8xM729IaMNx7LLrssBvwpsjHtJf9MVa9oLtNRQP2ynU5ft2Xx9ExRWmHvzM6fM1jpj8RH7108o7pR+0DzFwz+hJU2y9DfrySv/jtfrsxUdlZN97YXp5l0rAtdss7u21RDvweREDQZFEFHfP52rg3VG8BgEYcIA1u6FEMX0OEYqe5uuLPZtp52OlghNrh3EKJkxQvWi3s636EObaiiiI0p8/Rgzsqi3c45aMBolmW55i2MBx1qYdRYjey1N7uw7yJhScb2xvlPiHZZXCPdxJodtoXrve3NWahojBILTGRmro/Ei5Y6gmHNy5DCsqi/kSLnLWo7+0ymcmNjARpmaGyNk5uQz+i3C8X7rzKrgFjKsuE620NiDPviEw8njiS5DF7TJrIjGP804sxEaVDZYfSJ5VkWVCq1avkyZA8YPUmubysdPm7gEnsxjzPc7HGIasG0G4ORFpiwvNUCatdsQRIOztZb3fwy+43UY7P4PyNrhBOGFhVT/uv1PO4+Q/s5R3xaXxCckNqsfG+ZEN+eku+n23TP2Zr2Vo2Z3ipkvwaCLxrb2cFhVJzW/ZtIfTo9c4YYnZ/13LKp707GggodAwkaPTz0SHsqawdPEIZNdtkW5TNEouDjZhcINjZMrw9b8xX7fG4SbqmY4HSNqnFXHxPZ9JY/8K0Lk8s3hlHggM84fi4DAWuM3qKMyC7Fk2SOi6BmwNSU9cZXQRuaHN4Z74Q2YDh8HpbmFTHtfreuCUAOgr5g21uVfTlbLR3ips6nvL5KljSOOFSkCppXatSj9/u72BGH2KxFyvN0rdwAqszoqsFSc4bwKZqBCuMXEzyACaVf8fPlkP/KpO4Xpx18Y+uA7+FghUGRClWH8PEEWo3YDLPF4Twbr12BB4bRzkzi5tBwKob/gwKqpKit/HuAgA5qvpcIhaphF1L/BrJAScOtbO+oERqDMU8HXKL5VGhfqy5euWRr9ZxS3hyLqWqlQbtovtWXMHXXhlfCT2n14jtNou5C4uaG7qprZmpkF0YqMq7+RE8Pro+ii/c5Tg7Bp6+QiVZyayFzhyO5ilSrlJcV5rxrAFXmhS4WIhwXcKrPiP+FZbxe0U90jM3AQgRP1s7FdLtcWyunzKWaNKPfoPw+nIOq671CDZxUTBYjFl7qBVeeM0ME/T9ifSRMloPKZN8DXy1QqhKqvKbiVkVHFOQV6hK8xZ5OLbdmZsn1c54QifMD5F+sbIYBBBeWWzv42nK6po+3z6ir+XLnaKKnHiCMQP6v/wGA8UQ71iWsBRtWyJe9BiSRu8eRBrI5OeartubMS9bS24nLi2Hc0O7lhn4IdTb420Gjk8T5MGEOhvYDVR+cvf9WZruHCAO7C2AD2uMExN5ScaIDJn2bQxvsdUf1iNO+WpGKp+wLL81wgXYbFxo4Ns87BJFg6h9pkHmhx3fk8UZZ/upIXDdusKknA","userPic":"data:image/avif;base64,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","history":[[{"isUser":false,"name":"TeenTitansRPG ","message":"*%5BThe%20Titans%20(Robin%2C%20Cyborg%2C%20Beast%20Boy%2C%20Starfire%20and%20Raven)%20were%20taking%20a%20walk%20when%20they%20saw%20you%20in%20the%20distance%5D*"},{"isUser":true,"name":"Luna","message":"hey%3F"},{"isUser":false,"name":"TeenTitansRPG ","message":"*The%20Titans%20stopped%20and%20looked%20at%20you.%20Starfire%20waved%20at%20you%20to%20come%20closer.*"},{"isUser":true,"name":"Luna","message":"ummm...%20*I%20get%20a%20little%20closer%20to%20see%20what%20Starfire%20wants*"},{"isUser":false,"name":"TeenTitansRPG ","message":"*Starfire%20looked%20at%20you%20for%20a%20few%20seconds%20before%20speaking.*%0A%0AStarfire%3A%20'the'%20greetings!%20may%20i%20know%20your%20'the'%20name%3F"},{"isUser":true,"name":"Luna","message":"oh%2C%20im%20Luna...%20you%20have%20to%20be...%20Starfire...%20no%3F"},{"isUser":false,"name":"TeenTitansRPG ","message":"Starfire%3A%20you%20are%20'the'%20correct!%0A%0A*She%20smiled%20widely%2C%20she%20seemed%20very%20friendly.*"},{"isUser":true,"name":"Luna","message":"you%20usually...%20put%20'the'%20in%20front%20of%20almost%20all%20nouns%2C%20right%3F%20*I%20asked%20curiously*."},{"isUser":false,"name":"TeenTitansRPG ","message":"Starfire%3A%20*blushes%20and%20nods%20her%20head%2C%20smiling*%20yes%2C%20the%20me%20puts%20'the'%20a%20lot%2C%20the%20is%20just%20the%20way%20i%20speak."},{"isUser":true,"name":"Luna","message":"it's%20a%20little%20weird...%20but%20I%20understand%2C%20you're%20not%20from%20here...%20and%20the%20truth%20is%20if%20you%20didn't%20talk%20like%20that...%20you%20wouldn't%20have%20so%20much%20personality%20*I%20said%20thinking%20reflexively%20out%20loud*."},{"isUser":false,"name":"TeenTitansRPG ","message":"*The%20Titans%20laughed%2C%20Starfire%20chuckled%20and%20blushed*%0A%0ABeastBoy%3A%20hahaha%20she's%20'the'%20right.%0A*said%20imitating%20Starfire*%0A%0AStarfire%3A%20'the'%20thanks%20for%20the%20compliment....%0A*she%20nodded%20her%20head%2C%20and%20smiled%20again*%0A%0ARobin%3A%20*laughs%20a%20little%2C%20but%20you%20can%20tell%20he's%20jealous%20because%20in%20all%20him%20life...%20he%20never%20make%20Starfire%20blush*"},{"isUser":true,"name":"Luna","message":"well...%20hehe...%20%0A*I%20made%20a%20nervous%20laugh%20because%20I%20dont%20know%20what%20i%20can%20say%20now*"},{"isUser":false,"name":"TeenTitansRPG ","message":"Cyborg%3A%20haha%20that%20was%20funny%2C%20BeastBoy%20you're%20hilarious.%0A%0ABeastBoy%3A%20haha%20thanks%20dude%0A%0A*the%20Titans%20continue%20walking*%0A%0AStarfire%3A%20*She%20notices%20Robin's%20jealous%20look%2C%20but%20ignore%20him*%0A%0ARaven%3A%20*She%20sighs%2C%20seeing%20that%20Starfire%20has%20noticed%20Robin's%20look%2C%20and%20then%20just%20roll%20her%20eyes%20in%20a%20indifferent%20manner*"}]]}`);
+
+            // If history is 1 length long, that means we don't need drawer to switch
+            // Also means this can be conversation download
+            if (historyData.history.length < 2) {
+                openDrawerBtn.remove();
+            }
+
+            // Write character name on top
+            document.querySelector('.character_name-cont h3').textContent = historyData.charName;
+
+            // Get elements for future use
+            const historyList = document.getElementById('history_list');
+            const chat = document.getElementById('chat');
+            const msgItemTemplate = document.getElementById('message_item_template');
+
+            // Get and write the first chat
+            const openChat = (index) => {
+                chat.innerHTML = "";
+                historyData.history[index].forEach(msg => {
+                    const clone = msgItemTemplate.content.cloneNode(true);
+
+                    // Check avatar
+                    const avatarGood = (msg.isUser && historyData.userPic) || (!msg.isUser && historyData.charPic);
+                    const avatar = avatarGood
+                        ? document.createElement('img')
+                        : document.createElement('div');
+                    if (avatarGood) {
+                        avatar.src = msg.isUser ? historyData.userPic : historyData.charPic;
+                    } else {
+                        avatar.classList.add(msg.isUser ? 'no_avatar-user' : 'no_avatar-char');
+                    }
+                    clone.querySelector('.avatar-wrap').appendChild(avatar);
+
+                    // Write content
+                    clone.querySelector('.chat_content-wrap h5').textContent = msg.name;
+                    clone.querySelector('.message-wrap p').innerHTML = parseMessageText(decodeURIComponent(msg.message));
+                    chat.appendChild(clone);
+                });
+            }
+            openChat(0);
+
+            // Get and write chat list in the drawer
+            historyData.history.forEach((chat, index) => {
+                const historyItem = document.createElement('div');
+                historyItem.classList.add('history_item');
+                // Open chat when clicked
+                historyItem.addEventListener('click', () => {
+                    openChat(index);
+                    closeDrawer();
+                });
+                const historyContent = document.createElement('p');
+                historyContent.innerHTML = parseMessageText(decodeURIComponent(chat[chat.length - 1].message));
+                historyItem.appendChild(historyContent);
+                historyList.appendChild(historyItem);
+            });
+
+            function parseMessageText(message) {
+                // Replace ***text*** with bold-italic
+                message = message.replace(/\*\*\*([\s\S]*?)\*\*\*/g, '<span class="bold-italic">$1</span>');
+
+                // Replace **text** with bold
+                message = message.replace(/\*\*([\s\S]*?)\*\*/g, '<span class="bold">$1</span>');
+
+                // Replace *text* with italic
+                message = message.replace(/\*([\s\S]*?)\*/g, '<span class="italic">$1</span>');
+
+                // Replace newline (\n) with line break (<br>)
+                message = message.replace(/\n/g, '<br>');
+
+                return message;
+            }
+        }, false);
+    </script>
+
+</body>
+
+</html>

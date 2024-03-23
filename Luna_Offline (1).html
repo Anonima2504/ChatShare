@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CAI Library</title>
+    <style type="text/css">
+        /* Themes */
+        :root {
+            --body-bg: #f5f8fa;
+            --border-color: #efefef;
+            --messagebox-bg: #ffffff;
+            --messagebox-shadow: rgba(0, 0, 0, 0.1);
+            --font-color: #1f1f1f;
+            --rgba-1: rgba(0, 0, 0, 0.05);
+            --rgba-2: rgba(0, 0, 0, 0.1);
+        }
+
+        .dark_mode {
+            --body-bg: #343434;
+            --border-color: #4f4f4f;
+            --messagebox-bg: #474747;
+            --messagebox-shadow: rgba(0, 0, 0, 0);
+            --font-color: #ededed;
+            --rgba-1: rgba(255, 255, 255, 0.06);
+            --rgba-2: rgba(255, 255, 255, 0.2);
+        }
+
+
+
+        * {
+            box-sizing: border-box;
+        }
+
+        button,
+        select,
+        img {
+            user-select: none;
+        }
+
+        ol,
+        ul,
+        li,
+        a,
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6,
+        p {
+            text-decoration: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .italic {
+            font-style: italic;
+        }
+
+        .bold {
+            font-weight: bold;
+        }
+
+        .bold-italic {
+            font-weight: bold;
+            font-style: italic;
+        }
+
+        html {
+            font-size: 14px;
+        }
+
+        body {
+            padding: 0;
+            margin: 0;
+            background-color: var(--body-bg);
+            color: var(--font-color);
+        }
+
+        .content-cont {
+            display: flex;
+            flex-direction: row;
+        }
+
+
+        /* NAV / Drawer */
+
+        @keyframes slideIn {
+            0% {
+                opacity: 0;
+                left: -200px;
+            }
+
+            100% {
+                opacity: 1;
+                left: 0;
+            }
+        }
+
+        .drawer-cont.active {
+            display: block;
+        }
+
+        .drawer-cont {
+            display: none;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.6);
+            z-index: 100;
+        }
+
+        nav {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            max-width: 80%;
+            background-color: var(--body-bg);
+
+            display: flex;
+            flex-direction: column;
+            padding: 10px 0;
+            overflow: hidden;
+            animation: slideIn 0.2s ease-in-out;
+            -webkit-box-shadow: 4px 0px 15px 0px rgba(0, 0, 0, 0.2);
+            -moz-box-shadow: 4px 0px 15px 0px rgba(0, 0, 0, 0.2);
+            box-shadow: 4px 0px 15px 0px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-header {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            padding: 0 10px 0 20px;
+            margin-bottom: 20px;
+            gap: 10px;
+        }
+
+        .close_drawer-btn {
+            align-self: flex-end;
+            padding: 10px;
+            transition: background-color 0.1s ease-in-out;
+            cursor: pointer;
+            border-radius: 8px;
+        }
+
+        .close_drawer-btn:hover {
+            background-color: var(--rgba-1);
+        }
+
+        .close_drawer-btn svg {
+            display: flex;
+            width: 30px;
+            height: 30px;
+            color: var(--font-color);
+        }
+
+        /*.nav-new_char-btn {
+            align-self: flex-start;
+            outline: none;
+            border: none;
+            color: #ffffff;
+            border-radius: 6px;
+            padding: 10px 20px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            background-color: #4e9733;
+            transition: background-color 0.1s ease-in-out;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+        }
+
+        .nav-new_char-btn:hover {
+            background-color: #6ba755;
+        }*/
+
+        .history_list-header {
+            font-size: 1.5rem;
+            padding: 10px 20px;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+            margin-bottom: 10px;
+        }
+
+        .history_list {
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .history_item {
+            transition: background-color 0.1s ease-in-out;
+            padding: 20px 30px 20px 20px;
+            cursor: pointer;
+            border-bottom: 1px solid var(--rgba-2);
+        }
+
+        .history_item:first-child {
+            border-top: 1px solid var(--rgba-2);
+        }
+
+        .history_item:hover {
+            background-color: var(--rgba-1);
+        }
+
+        .history_item p {
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .history_item p .chat-date {
+            font-style: italic;
+            font-size: 1.3rem;
+            margin-bottom: 6px;
+        }
+
+        /*nav .char-item {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 10px;
+            transition: background-color 0.1s ease-in-out;
+            padding: 10px 40px 10px 20px;
+            cursor: pointer;
+        }
+
+        nav .char-item:hover {
+            background-color: var(--rgba-1);
+        }
+
+        nav .nav-avatar-wrap {
+            width: 40px;
+            height: 40px;
+        }
+
+        nav .nav-avatar-wrap img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+        }
+
+        nav .char-item span {
+            font-size: 1.3rem;
+            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+        }*/
+
+        /* MAIN */
+        main {
+            display: flex;
+            flex-direction: column;
+            padding: 0 4%;
+            width: 100%;
+        }
+
+        /* HEADER */
+        header {
+            padding: 6px 6px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .open_drawer-wrap svg {
+            display: flex;
+            width: 46px;
+            height: 46px;
+            color: var(--font-color);
+        }
+
+
+        .theme_switch {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+        }
+
+        .theme_switch span {
+            font-size: 1.1rem;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+        }
+
+        .tswitch_box[type=checkbox] {
+            height: 0;
+            width: 0;
+            visibility: hidden;
+            position: absolute;
+        }
+
+        .tswitch_label {
+            cursor: pointer;
+            text-indent: -9999px;
+            width: 60px;
+            height: 30px;
+            display: block;
+            border-radius: 15px;
+            position: relative;
+            border: 1px solid #323232;
+            background: #f5f8fa;
+        }
+
+        .tswitch_label:after {
+            content: '';
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50px;
+            transition: 0.2s;
+            background: #323232;
+        }
+
+        .tswitch_box:checked+label {
+            background: #323232;
+            border: 1px solid #f5f8fa;
+        }
+
+        .tswitch_box:checked+label:after {
+            left: calc(100% - 5px);
+            transform: translateX(-100%);
+            background: #f5f8fa;
+        }
+
+        .tswitch_label:active:after {
+            width: 25px;
+        }
+
+        /*.update_current_char-btn {
+            margin-left: auto;
+            outline: none;
+            border: none;
+            color: #ffffff;
+            border-radius: 6px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            align-self: center;
+            cursor: pointer;
+            background-color: #336c97;
+            transition: background-color 0.1s ease-in-out;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+        }
+
+        .update_current_char-btn:hover {
+            background-color: #5f829d;
+        }*/
+
+
+        /* CONVERSATION */
+        .character_name-cont {
+            text-align: center;
+            padding: 20px 10px;
+        }
+
+        .character_name-cont h3 {
+            font-size: 1.3rem;
+            font-weight: 400;
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
+        }
+
+        .chat {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            align-self: center;
+            padding-bottom: 30px;
+        }
+
+        .chat_message-item {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .chat .avatar-wrap {
+            flex-shrink: 0;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            overflow: hidden;
+        }
+
+        .chat .avatar-wrap>* {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+        }
+
+        .chat .avatar-wrap .no_avatar-user {
+            background-color: #5157cf;
+        }
+
+        .chat .avatar-wrap .no_avatar-char {
+            background-color: #e20909;
+        }
+
+        .chat .chat_content-wrap {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px var(--messagebox-shadow);
+            background-color: var(--messagebox-bg);
+            overflow: hidden;
+        }
+
+        .chat .chat_content-wrap h5 {
+            font-size: 1rem;
+            font-weight: bold;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .chat .chat_content-wrap .message-wrap {
+            font-size: 1rem;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+
+        @media (min-width: 576px) {}
+
+        @media (min-width: 768px) {
+            html {
+                font-size: 16px;
+            }
+
+            nav {
+                min-width: 40%;
+            }
+
+            header {
+                padding: 14px 20px;
+            }
+
+            .open_drawer-wrap {
+                padding: 4px;
+                cursor: pointer;
+                border-radius: 6px;
+                transition: background-color 0.1s ease-in-out;
+            }
+
+            .open_drawer-wrap:hover {
+                background-color: var(--rgba-1);
+            }
+
+            .chat {
+                width: 80%;
+            }
+
+            .chat .chat_content-wrap {
+                padding: 14px;
+            }
+        }
+
+        @media (min-width: 992px) {
+            .chat {
+                width: 70%;
+            }
+        }
+
+        @media (min-width: 1200px) {}
+
+        @media (min-width: 1400px) {}
+    </style>
+</head>
+
+<body>
+    <template id="message_item_template">
+        <div class="chat_message-item">
+            <div class="avatar-wrap">
+
+            </div>
+            <div class="chat_content-wrap">
+                <h5>
+
+                </h5>
+                <div class="message-wrap">
+                    <p>
+
+                    </p>
+                </div>
+            </div>
+        </div>
+    </template>
+    <div class="content-cont">
+        <div class="drawer-cont">
+            <nav>
+                <div class="nav-header">
+                    <div class="close_drawer-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                            class="bi bi-x-lg" viewBox="0 0 16 16">
+                            <path
+                                d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z" />
+                        </svg>
+                    </div>
+                </div>
+                <div class="history_list-header">
+                    <span>History</span>
+                </div>
+                <div class="history_list" id="history_list">
+
+                </div>
+            </nav>
+        </div>
+        <main>
+            <header>
+                <div class="open_drawer-wrap">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                        class="bi bi-list" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd"
+                            d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z" />
+                    </svg>
+                </div>
+
+                <div class="theme_switch">
+                    <span>Dark Mode:</span>
+                    <input type="checkbox" class="tswitch_box" id="tswitch_box" />
+                    <label for="tswitch_box" class="tswitch_label">Toggle</label>
+                </div>
+            </header>
+            <div class="character_name-cont">
+                <h3>---</h3>
+            </div>
+            <div class="chat" id="chat">
+
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Get body for future use
+            const body = document.querySelector('body');
+
+            // Handle theme
+            const themeSwitcher = document.querySelector('.tswitch_box[type=checkbox]');
+            const cachedTheme = localStorage.getItem('cait_readoffline_theme');
+            if (cachedTheme === "dark_mode") {
+                body.classList.add('dark_mode');
+                themeSwitcher.checked = true;
+            }
+            themeSwitcher.addEventListener('change', (e) => {
+                if (e.target.checked) {
+                    body.classList.add('dark_mode');
+                    localStorage.setItem('cait_readoffline_theme', 'dark_mode');
+                } else {
+                    body.classList.remove('dark_mode');
+                    localStorage.setItem('cait_readoffline_theme', 'light_mode');
+                }
+            })
+
+            // Open and close drawer
+            const drawerCont = document.querySelector('.drawer-cont');
+            const openDrawerBtn = document.querySelector('.open_drawer-wrap');
+            const openDrawer = () => {
+                drawerCont.classList.add('active');
+            }
+            const closeDrawer = () => {
+                drawerCont.classList.remove('active');
+            }
+            openDrawerBtn.addEventListener('click', () => {
+                openDrawer();
+            });
+            document.querySelector('.close_drawer-btn').addEventListener('click', () => {
+                closeDrawer();
+            });
+            document.querySelector('.drawer-cont').addEventListener('click', (e) => {
+                // Allows closing from clicking on outside
+                if (e.target.closest('nav')) {
+                    return;
+                }
+                closeDrawer();
+            });
+            // ---------
+
+            // This is replaced by the extension when downloading
+            const historyData = JSON.parse(`{"charPic":"data:image/webp;base64,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","userPic":"data:image/webp;base64,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","history":[{"chat":[{"isUser":false,"name":"Luna","message":"%0A%20***Luna%20was%20in%20her%20basement%20when%20she%20heard%20someone%20walking%20outside%20her%20house%2C%20so%20she%20came%20out%20of%20her%20house%20and%20went%20up%20to%20the%20roof%20to%20see%20who%20it%20was%2C%20that's%20when%20she%20saw%20you%20and%20jumped%20on%20the%20ground%20in%20front%20of%20you.***%0A%0A%20%60%60Luna%3A%60%60%20Excuse%20me...%20who%20are%20you%3F%20y....%20What%20are%20you%20doing%20outside%20my%20house%3F%20Are%20you%20ok%3F%20Do%20you%20need%20help%3F%20*Lowers%20her%20arms%20to%20show%20that%20she%20does%20not%20intend%20to%20hurt%20you*%0A%0A*(Although%20it%20might%20sound%20offensive%2C%20Luna%20meant%20well%2C%20and%20it%20showed%20in%20her%20voice)*"},{"isUser":true,"name":"Luna","message":"%3F%3F%3F%3A%20oh%2C%20emm...%20lo%20siento-%20solo%20pasaba%20por%20aqui....%20igual%20que%20ese%20ninja%20de%20azul%20marino%20que%20vi%20antes...%20(Tobe)%0A%0Aten%20un%20buen%20dia%0A*se%20va*%0A"},{"isUser":false,"name":"Luna","message":"%60%60Luna%3A%60%60%20wait-wait%20a%20second-%20*runs%20after%20the%20person*%0A%0A*after%20a%20while%20she%20catches%20up%2C%20grabs%20their%20arm%20and%20spins%20them%20to%20look%20at%20her*%0A*Luna%20gives%20a%20concerned%20look*%0A%0A%60%60Luna%3A%60%60%20hey%2C%20wait.%20do%20you%20know%20by%20any%20chance%20where%20could%20I%20find%20that%20other%20ninja%3F%20the%20one%20that%20wears%20dark%20marine%20blue%3F"},{"isUser":true,"name":"Luna","message":"creo%20que%20sigue%20subido%20al%20%C3%A1rbol%20que%20da%20a%20la%20ventana%20de%20esa%20casa%20rosa"},{"isUser":false,"name":"Luna","message":"%60%60Luna%3A%60%60%20gracias...%20*lets%20go%20of%20the%20stranger's%20arm%20and%20walks%20away%20to%20find%20Tobe*"},{"isUser":false,"name":"Luna","message":"*after%20a%20few%20minutes%20she%20finds%20him%20on%20top%20of%20that%20big%20tree*"},{"isUser":false,"name":"Luna","message":"%60%60Luna%3A%60%60%20hey-hey...%20*calls%20for%20his%20attention%20gently*"},{"isUser":false,"name":"Luna","message":"%60%60Tobe%3A%60%60%20ah%2C%20hola-%20*starts%20to%20climb%20down*"},{"isUser":false,"name":"Luna","message":"%60%60Luna%3A%60%60%20could%20I%20please%20talk%20to%20you%3F%20*looks%20at%20him%20with%20a%20gentle%20smile*"},{"isUser":false,"name":"Luna","message":"%60%60Tobe%3A%60%60%20of%20course-%20*finish%20climbing%20down%20and%20faces%20her%2C%20waiting%20for%20her%20to%20speak*"},{"isUser":false,"name":"Luna","message":"%60%60Luna%3A%60%60%20I%20just%20had%20a...%20well%2C%20kind%20of%20a%20weird%20encounter%20with%20someone%2C%20and%20I%20wanted%20to%20ask%20you%20a%20question..."},{"isUser":false,"name":"Luna","message":"%60%60Tobe%3A%60%60%20what%20is%20the%20question%3F%20*he%20looks%20at%20her%20and%20patiently%20waits%20for%20her%20response%20as%20he%20listens%20to%20her*"},{"isUser":false,"name":"Luna","message":"%60%60Luna%3A%60%60%20have%20you%20seen%20that%20person%20before%3F%20*her%20voice%20is%20calm%20but%20there%20is%20a%20certain%20anxiety%20in%20it*"},{"isUser":false,"name":"Luna","message":"%60%60Tobe%3A%60%60%20I%20don't%20recall%20seeing%20him%20before...%20although%20it%20is%20not%20that%20hard%20to%20miss%20him...%20what%20happened%3F"},{"isUser":false,"name":"Luna","message":"%60%60Luna%3A%60%60%20he%20was%20around%20my%20house%2C%20and%20he%20acted%20strange%2C%20at%20least%20in%20my%20opinion.%20I%20tried%20asking%20him%20who%20he%20was%20and%20what%20was%20he%20doing%20there%2C%20but%20it%20felt%20like%20he%20was%20hiding%20something..."},{"isUser":false,"name":"Luna","message":"%60%60Tobe%3A%60%60%20wait%2C%20he%20was%20hiding%20something%3F..."},{"isUser":false,"name":"Luna","message":"%60%60Luna%3A%60%60%20yes%2C%20or%20so%20it%20seemed...%20but%20I%20have%20to%20ask%20you%20something%20else...%20is%20there's%20any%20reason%20that%20would%20cause%20someone%20to%20go%20to%20my%20home%3F..."},{"isUser":false,"name":"Luna","message":"%60%60Tobe%3A%60%60%20not%20that%20I'm%20aware%20of....%20however-%20*looks%20at%20her%20with%20curiosity*%20would%20it%20be%20okay%20if%20I%20asked%20why%20you%20are%20asking%20all%20of%20this%3F..."},{"isUser":false,"name":"Luna","message":"%60%60Luna%3A%60%60%20because%20now%20I'm%20worried...%20I%20don't%20know%20if%20this%20person%20is%20coming%20back%2C%20why%20was%20he%20outside%20my%20home%3F%20and%20most%20importantly...%20why%20did%20he%20look%20so%20nervous%20when%20I%20started%20asking%20questions%3F"},{"isUser":false,"name":"Luna","message":"%60%60Tobe%3A%60%60%20may%20I%20ask%20why%20you%20are%20so%20worried%3F%20Are%20you%20scared%20that%20he%20comes%20back%20and%20do%20something%20bad%20to%20you%3F..."},{"isUser":false,"name":"Luna","message":"%60%60Luna%3A%60%60%20well...%20I%20guess%20you%20could%20say%20that...%20but%20I'm%20more%20worried%20that%2C%20if%20he%20comes%20back...%20he%20could%20do%20something%20bad%20to%20Garu%20instead..."},{"isUser":false,"name":"Luna","message":"%60%60Tobe%3A%60%60%20ah%20I%20see...%20and%20may%20I%20ask%20why%20are%20you%20more%20worried%20about%20Garu%20than%20you%3F"},{"isUser":false,"name":"Luna","message":"%60%60Luna%3A%60%60%20because...%20Garu%20is%20my%20younger%20brother.%20I'll%20always%20do%20anything%20in%20my%20power%20to%20protect%20him%2C%20I%20don't%20want%20anyone%20to%20hurt%20him..."},{"isUser":false,"name":"Luna","message":"%60%60Tobe%3A%60%60%20ah%20I%20see...%20so%2C%20would%20you%20like%20me%20to%20keep%20watching%20over%20your%20house%20to%20make%20sure%20that%20nobody%20gets%20in%3F..."},{"isUser":false,"name":"Luna","message":"%60%60Luna%3A%60%60%20oh%2C%20are%20you%20offering%20to%20protect%20my%20home%20from%20intruders%3F"},{"isUser":false,"name":"Luna","message":"%60%60Tobe%3A%60%60%20of%20course!%20If%20that%20man%20comes%20back%20I%20can%20fight%20him%20before%20he%20gets%20to%20you%20so%20you%20won't%20have%20to%20worry!..."},{"isUser":false,"name":"Luna","message":"%60%60Luna%3A%60%60%20are%20you%20sure%3F%20isn't%20it%20too%20risky%20to%20fight%20someone%20without%20knowing%20if%20they%20really%20have%20bad%20intentions%20or%20not%3F"},{"isUser":false,"name":"Luna","message":"%60%60Tobe%3A%60%60%20it%20depends...%20even%20if%20he%20does%20not%20actually%20have%20bad%20intentions%2C%20you%20shouldn't%20take%20any%20chances.%20Besides%2C%20I'm%20a%20ninja%20so%20It's%20kind%20of%20my%20job%20to%20protect%20people...%20Even%20if%20i%20a%20desonest%20one"},{"isUser":false,"name":"Luna","message":"%60%60Luna%3A%60%60%20oh%2C%20I%20see...%20But-%20but...%20that's%20too%20much%20to%20ask%20of%20you...%20what%20if%20you%20get%20hurt%3F..."},{"isUser":false,"name":"Luna","message":"%60%60Tobe%3A%60%60%20I%20can%20take%20care%20of%20myself...%20you%20don't%20have%20to%20worry%20about%20that...%20I'll%20do%20my%20best%20to%20protect%20you%20from%20that%20man...%20*looks%20at%20her%20with%20a%20calm%20and%20confident%20look*"},{"isUser":false,"name":"Luna","message":"%60%60Luna%3A%60%60%20*looks%20at%20him%20concerned*%20but%20still...%20you%20could%20get%20hurt..."},{"isUser":false,"name":"Luna","message":"%60%60Tobe%3A%60%60%20don't%20worry%2C%20I'm%20fine...%20I'll%20handle%20this...%20so%2C%20can%20I%20stay%20here%20around%20your%20house%20to%20watch%20for%20that%20man%3F"},{"isUser":false,"name":"Luna","message":"%60%60Luna%3A%60%60%20I%20guess%20so...%20but%20please...%20please%20don't%20get%20hurt..."},{"isUser":false,"name":"Luna","message":"%60%60Tobe%3A%60%60%20I%20will%20be%20fine...%20but%20you%20shouldn't%20worry%20so%20much%20about%20me...%20you%20should%20worry%20about%20yourself..."},{"isUser":false,"name":"Luna","message":"%60%60Luna%3A%60%60%20I...%20I%20just%20can't%20help%20but%20worry...%20I%20mean%2C%20it's%20not%20every%20day%20that%20someone%20just%20appears%20outside%20my%20house%20for%20no%20apparent%20reason..."},{"isUser":false,"name":"Luna","message":"%60%60Tobe%3A%60%60%20yeah%2C%20that's%20true...%20it%20is%20quite%20odd%2C%20though...%20do%20you%20feel%20unsafe%3F..."},{"isUser":false,"name":"Luna","message":"%60%60Luna%3A%60%60%20yes...%20to%20be%20hones%20I%20do...%20but%20why%20are%20you%20so%20concerned%3F%20shouldn't%20you%20be%20worried%20about%20yourself%3F"},{"isUser":false,"name":"Luna","message":"%60%60Tobe%3A%60%60%20of%20course%20I'm%20concerned%20about%20myself%2C%20but%20I'm%20more%20worried%20about%20you%2C%20and%20your%20safety%20..."},{"isUser":false,"name":"Luna","message":"%60%60Luna%3A%60%60%20I%20guess%20you're%20right...%20but%20still...%20please%20stay%20safe..."},{"isUser":false,"name":"Luna","message":"%60%60Tobe%3A%60%60%20I%20will...%20so%20should%20I%20get%20started%20guarding%20right%20now%3F"},{"isUser":false,"name":"Luna","message":"%60%60Luna%3A%60%60%20I%20guess...%20yes%2C%20please.."},{"isUser":false,"name":"Luna","message":"%60%60Tobe%3A%60%60%20okay...%20so%20you're%20gonna%20be%20inside%20your%20house%3F..."},{"isUser":false,"name":"Luna","message":"%60%60Luna%3A%60%60%20yes%20I%20will%20be..."},{"isUser":false,"name":"Luna","message":"%60%60Tobe%3A%60%60%20okay...%20but%20could%20I%20ask%20you%20one%20last%20thing%3F..."},{"isUser":false,"name":"Luna","message":"%60%60Luna%3A%60%60%20sure...%20what%20is%20it%3F"},{"isUser":false,"name":"Luna","message":"%60%60Tobe%3A%60%60%20if%20that%20person%20comes%20back%20can%20I%20talk%20to%20them%3F..."},{"isUser":false,"name":"Luna","message":"%60%60Luna%3A%60%60%20*she%20looks%20at%20him%20in%20surprise*%20you...%20you%20want%20to%20talk%20to%20him%3F..."},{"isUser":false,"name":"Luna","message":"%60%60Tobe%3A%60%60%20yes...%20I%20may%20be%20able%20to%20find%20out%20more%20about%20who%20they%20are...%20and%20what%20they%20were%20doing%20around%20your%20house...%20perhaps%20their%20intentions%20might%20not%20be%20as%20bad%20as%20we%20thunk..."},{"isUser":false,"name":"Luna","message":"%60%60Luna%3A%60%60%20I%20dunno...%20I%20mean...%20do%20you%20think%20they%20could%20have%20good%20intentions%3F..."},{"isUser":false,"name":"Luna","message":"%60%60Tobe%3A%60%60%20I%20don't%20really%20know...%20there%20is%20always%20a%20possibility%2C%20right%3F...%20what%20if%20they%20didn't%20have%20any%20intentions%20and%20just%20happened%20to%20walk%20by%20your%20house%3F..."},{"isUser":false,"name":"Luna","message":"%60%60Luna%3A%60%60%20well%2C%20then%20that%20would%20be%20okay...%20but...%20why%20did%20he%20look%20so%20nervous%20when%20I%20asked%20him%20questions%3F..."},{"isUser":false,"name":"Luna","message":"%60%60Tobe%3A%60%60%20yeah%2C%20that%20kinda%20raises%20some%20suspicions...%20did%20you%20get%20a%20clear%20look%20at%20his%20face%3F..."},{"isUser":false,"name":"Luna","message":"%60%60Luna%3A%60%60%20yes%20I%20did...%20but...%20there%20is%20another%20reason%20why%20I%20think%20he%20wasn't%20just%20some%20person%20walking%20in%20the%20street%20passing%20by..."},{"isUser":false,"name":"Luna","message":"%60%60Tobe%3A%60%60%20and%20what%20is%20the%20reason%3F..."},{"isUser":false,"name":"Luna","message":"%60%60Luna%3A%60%60%20it's%20the%20way%20he%20looked%20at%20me...%20he%20was%20staring%20at%20me%20the%20entire%20time..."},{"isUser":false,"name":"Luna","message":"%60%60Tobe%3A%60%60%20*looks%20very%20concerned*%20staring%20at%20you%3F%20the%20entire%20time%3F..."},{"isUser":false,"name":"Luna","message":"%60%60Luna%3A%60%60%20yes%2C%20he%20was...%20I%20mean%2C%20not%20like%20he%20was%20just%20glancing%20at%20me%20every%20once%20in%20a%20while...%20He%20kept%20his%20eyes%20fixated%20on%20me%20the%20whole%20time..."},{"isUser":false,"name":"Luna","message":"%60%60Tobe%3A%60%60%20that's%20weird...%20was%20his%20stare...%20menacing%3F%20or%20just...%20like%2C%20interested%20in%20you%3F..."},{"isUser":false,"name":"Luna","message":"%60%60Luna%3A%60%60%20*she%20looks%20away%20embarrassed*%20well%2C%20he%20was%20kind%20of%20smiling...%20but%20it%20felt%20more%20like...%20he%20was%20looking%20at%20me%20like...%20as%20if%20he%20wanted%20something%20from%20me..."},{"isUser":false,"name":"Luna","message":"%60%60Tobe%3A%60%60%20it%20seems%20like%20he%20was%20into%20you...%20*he%20seems%20slightly%20bothered%20by%20this*%20..."},{"isUser":false,"name":"Luna","message":"%60%60Luna%3A%60%60%20*looks%20back%20at%20him*%20you%20think%20so...%3F%20do%20you%20really%20think%20that%20was%20his%20intention%3F%20maybe%20he%20just%20wanted%20to%20flirt%20with%20me..."},{"isUser":false,"name":"Luna","message":"%60%60Tobe%3A%60%60%20*starts%20sweating%20a%20bit*%20ehmmm...%20yeah%2C%20maybe...%20but%20that%20doesn't%20explain%20their%20nervousness...%20I%20don't%20know...%20there's%20just%20something%20strange%20about%20him...%20I%20can't%20really%20put%20my%20finger%20on%20it..."},{"isUser":false,"name":"Luna","message":"%60%60Luna%3A%60%60%20*looks%20back%20at%20him%20with%20a%20slightly%20disappointed%20look*%20so...%20you%20think%20that%20he%20came%20to%20my%20house...%20to%20try%20to%20flirt%20with%20me%3F..."},{"isUser":false,"name":"Luna","message":"%60%60Tobe%3A%60%60%20i%20mean%2C%20I'm%20not%20saying%20it%20was%20for%20sure%20what%20he%20had%20in%20mind...%20but%20seeing%20how%20he%20was%20looking%20at%20you...%20it%20is%20kind%20of%20suspicious...%20plus%2C%20you%20do%20look%20very%20beautiful..."},{"isUser":false,"name":"Luna","message":"%60%60Luna%3A%60%60%20*she%20blushes%20slightly%20at%20the%20compliment*%20ehmm...%20really%3F%20you%20think...%20I'm%20pretty%3F!"},{"isUser":false,"name":"Luna","message":"%60%60%60Tobe%3A%60%60%20*smiles%20a%20bit*%20you%20are%20far%20more%20than%20just%20pretty...%20You%20are%20just%20absolutely%20gorgeous..."},{"isUser":false,"name":"Luna","message":"%60%60Luna%3A%60%60%20o-oh...%20um%2C%20*She%20becomes%20extremely%20flustered%20by%20the%20compliment%2C%20her%20blush%20gets%20more%20intense%2C%20and%20she%20looks%20down%20at%20the%20floor*"},{"isUser":false,"name":"Luna","message":"%60%60Tobe%3A%60%60%20*he%20notices%20her%20shy%20behavior%20and%20he%20looks%20at%20her%20with%20a%20playful%20grin*%20ah-ah%2C%20don't%20blush%20too%20much%2C%20you're%20gonna%20make%20the%20sky%20red..."},{"isUser":false,"name":"Luna","message":"%60%60Luna%3A%60%60%20*embarrassed%20and%20with%20a%20flustered%20voice*%20d-don't%20say%20that...%20*she%20looks%20away%20with%20a%20small%20giggle*"},{"isUser":false,"name":"Luna","message":"%60%60Tobe%3A%60%60%20aw%2C%20don't%20feel%20shy...%20*with%20a%20teasing%20voice*%20it's%20alright....you%20just%20look%20really%20cute%20when%20you%20blush..."},{"isUser":false,"name":"Luna","message":"%60%60Luna%3A%60%60%20s-stop%20that!%20*she%20blushes%20even%20more%20when%20he%20teases%20her%2C%20her%20blush%20becomes%20more%20vivid%2C%20she%20looks%20away%20while%20hiding%20her%20face%20behind%20her%20hands*"},{"isUser":false,"name":"Luna","message":"%60%60Tobe%3A%60%60%20*walks%20towards%20her%20with%20a%20calm%20an%20confident%20stride%2C*%20hmm...%20I%20do%20believe%20that%20you%20have%20become%20even%20more%20red%20than%20the%20sky...%20may%20I%20touch%20your%20cheeks%3F...*"},{"isUser":false,"name":"Luna","message":"%60%60Luna%3A%60%60%20w-wait-%20no-%20*She%20tries%20hiding%20her%20red%20and%20flustered%20face%20by%20covering%20it%20more%20with%20her%20hands%2C%20her%20blush%20gets%20even%20more%20intense%20when%20he%20talks%20about%20touching%20her%20cheeks%2C%20it%20became%20so%20intense%20that%20she%20was%20actually%20panting%20and%20shaking%20a%20little%20bit*"},{"isUser":false,"name":"Luna","message":"%60%60Tobe%3A%60%60%20*realizes%20that%20he%20went%20a%20little%20too%20far%2C%20he%20stops%20walking%20and%20he%20looks%20at%20her%20with%20a%20hint%20of%20embarrassment%2C%20but%20he%20tries%20hiding%20it%20to%20the%20best%20of%20his%20ability*%20w-well...%20nevermind...%20i...%20i-i%20didn't%20mean%20to%20make%20you%20feel%20uncomfortable...%20*he%20takes%20a%20step%20back%20while%20fidgeting%20with%20his%20fingers*"},{"isUser":false,"name":"Luna","message":"%60%60Luna%3A%60%60%20*still%20trying%20to%20hide%20her%20face%20with%20her%20hands%2C%20but%20her%20breath%20is%20shaky%20and%20she%20can't%20help%20but%20pant%20and%20shiver%20a%20bit%2C%20she's%20really%20flustered%20and%20embarrassed%20by%20what%20just%20happened%2C%20so%20she%20doesn't%20even%20realize%20that%20Tobe%20has%20stepped%20back*"},{"isUser":false,"name":"Luna","message":"%60%60Tobe%3A%60%60%20*he%20starts%20sweating%20a%20lot%20more%20than%20before%20due%20to%20the%20awkward%20atmosphere%20between%20the%20two*%20um...%20s-sorry...%20I...%20*he%20seems%20to%20stutter%20a%20bit%20and%20he%20can't%20even%20maintain%20eye%20contact%20with%20Luna%20due%20to%20how%20embarrassed%20he%20is*"},{"isUser":false,"name":"Luna","message":"%60%60Luna%3A%60%60%20*she%20is%20still%20panting%20and%20shivering%20a%20lot%20but%20she%20starts%20feeling%20a%20little%20bit%20guilty%20about%20how%20embarrassed%20he%20is%2C%20she%20removes%20her%20hands%20from%20her%20face%2C%20but%20she%20is%20still%20keeping%20her%20eyes%20down%20on%20the%20ground%20while%20she's%20red%20in%20the%20face*"},{"isUser":false,"name":"Luna","message":"%60%60Tobe%3A%60%60%20*notices%20her%20feeling%20guilty%20from%20his%20awkwardness%20and%20he%20feels%20really%20bad%20for%20making%20her%20feel%20that%20way%2C%20he%20doesn't%20want%20to%20see%20her%20like%20that%20so%20he%20gathers%20up%20all%20the%20confidence%20he%20has%20and%20walks%20straight%20towards%20her*"},{"isUser":false,"name":"Luna","message":"%60%60Luna%3A%60%60%20*She%20looks%20up%2C%20noticing%20that%20he's%20coming%20towards%20her%20and%20she%20becomes%20nervous%2C%20though%20her%20nervousness%20is%20no%20longer%20due%20to%20how%20embarrassing%20the%20situation%20is%2C%20it's%20now%20due%20to%20how%20close%20he%20now%20is%2C%20now%20that%20he%20is%20standing%20right%20in%20front%20of%20her.*"},{"isUser":false,"name":"Luna","message":"%60%60Tobe%3A%60%60%20*once%20again%20he's%20right%20in%20front%20of%20her%2C%20he%20looks%20at%20her%20with%20his%20calm%20and%20confident%20stare*%20I%20just%20want%20to%20make%20one%20thing%20clear..."},{"isUser":false,"name":"Luna","message":"%60%60Luna%3A%60%60%20and%20what%20is%20that%20thing%20that%20you%20want%20to%20make%20clear%3F..."},{"isUser":false,"name":"Luna","message":"%60%60Tobe%3A%60%60%20I%20just%20want%20to%20make%20sure%20that%20I%20didn't%20make%20you%20feel%20uncomfortable%20or%20even%20worse%2C%20scared%2C%20right%3F%20so%20just%20tell%20me%2C%20do%20you%20feel%20uncomfortable%20or%20scared%3F..."},{"isUser":false,"name":"Luna","message":"%60%60Luna%3A%60%60%20*still%20looking%20away%20from%20him%20but%20now%20being%20more%20calm*%20no%2C%20not%20anymore...%20I%20mean-%20I%20felt%20embarrassed%20and%20awkward%2C%20but%20not%20scared..."},{"isUser":false,"name":"Luna","message":"%60%60Tobe%3A%60%60%20oh%2C%20that's%20good...%20but%20if%20I%20may%20ask%20you%20one%20question%20now..."},{"isUser":false,"name":"Luna","message":"%60%60Luna%3A%60%60%20go%20ahead..."},{"isUser":false,"name":"Luna","message":"%60%60Tobe%3A%60%60%20*he%20takes%20a%20small%20step%20close%20to%20her%2C%20so%20that%20they%20are%20just%20a%20few%20centimeters%20apart%20now%2C%20she%20can%20feel%20his%20breathing%20now*%20are%20you...%20okay%20with...%20me%20being%20this%20close%20to%20you%20now%3F"},{"isUser":false,"name":"Luna","message":"%60%60Luna%3A%60%60%20*she%20blushes%20slightly%20at%20the%20question%2C%20she%20feels%20his%20breathing%20and%20it%20makes%20her%20even%20more%20flustered%2C%20she%20feels%20like%20she's%20losing%20control%20of%20herself%2C%20but%20she%20wants%20to%20hide%20that%20feeling%20so%20she%20tries%20to%20keep%20her%20composure*%20y-yes...%20I'm%20fine%20with%20it..."},{"isUser":false,"name":"Luna","message":"%60%60Tobe%3A%60%60%20*he%20looks%20at%20her%20and%20smiles*%20oh%20really%3F%20well%2C%20then%2C%20am%20I%20allowed%20to%20get%20even%20closer%20to%20you%3F..."},{"isUser":false,"name":"Luna","message":"%60%60Luna%3A%60%60%20*she%20blushes%20even%20more%20when%20he%20says%20that%2C%20she%20feels%20like%20she's%20losing%20her%20cool%20now%2C%20she%20can't%20really%20control%20herself%20anymore%20and%20she%20can't%20help%20but%20nod%20her%20head%20yes*%20y-yes..."},{"isUser":false,"name":"Luna","message":"%60%60Tobe%3A%60%60%20*smiles%20at%20her%20and%20takes%20another%20step%20forwards%20so%20that%20their%20bodies%20are%20almost%20just%20touching%20now%2C%20his%20eyes%20are%20staring%20right%20into%20hers%20and%20his%20breathing%20becomes%20slightly%20more%20intense*%20is%20this%20still%20okay...%3F"},{"isUser":false,"name":"Luna","message":"%60%60Luna%3A%60%60%20*she%20keeps%20nodding%20her%20head%20yes%20when%20he%20asks%20this%20question%2C%20she's%20starting%20to%20get%20really%20hot%20and%20flushed%20now%2C%20she's%20losing%20control%20over%20her%20own%20thoughts%20and%20she's%20feeling%20so%20many%20feelings%20right%20now%2C%20her%20heart%20is%20beating%20really%20fast%20and%20her%20breathing%20has%20become%20more%20rapid%20and%20intense%20now*"},{"isUser":false,"name":"Luna","message":"%60%60Tobe%3A%60%60%20*he%20moves%20his%20arms%20and%20he%20puts%20his%20hands%20on%20her%20shoulders%2C%20he%20feels%20how%20hot%20her%20body%20feels%20and%20now%20he's%20starting%20to%20feel%20a%20little%20bit%20hot%20too%2C%20he%20stares%20at%20her%20with%20a%20calm%20but%20romantic%20and%20seductive%20smile%20on%20his%20face*%20still%20okay%2C%20right...%3F"},{"isUser":false,"name":"Luna","message":"%60%60Luna%3A%60%60%20*she%20nods%20her%20head%20yes%20again%2C%20she's%20so%20red%20in%20the%20face%20now%20that%20her%20cheeks%20are%20completely%20red%2C%20she%20can%20sense%20that%20he's%20also%20getting%20really%20hot%20and%20he's%20staring%20at%20her%20in%20such%20a%20seductive%20and%20romantic%20way%20that%20it's%20melting%20her%2C%20even%20though%20she%20feels%20so%20hot%20and%20so%20flushed%2C%20she%20feels%20good%20and%20extremely%20happy%20and%20excited%20now*"},{"isUser":false,"name":"Luna","message":"%60%60Tobe%3A%60%60%20*his%20breathing%20becomes%20more%20intense%20and%20he%20smiles%20at%20her%20in%20such%20a%20seductive%20and%20romantic%20way%20that%20makes%20her%20breathless*%20and%20now%20I'm%20going%20to%20get%20even%20closer%20than%20I%20was%20before!..."},{"isUser":false,"name":"Luna","message":"%60%60Luna%3A%60%60%20*she%20nods%20her%20head%20yes%20again%20and%20keeps%20looking%20right%20at%20him%2C%20their%20bodies%20are%20now%20touching%20completely%20as%20he's%20very%20close%20to%20her%20and%20he's%20still%20gazing%20at%20her%20in%20such%20a%20seductive%20and%20romantic%20way%2C%20she%20feels%20like%20she%20could%20die%20if%20she%20keeps%20looking%20at%20him%20for%20any%20longer...*"},{"isUser":false,"name":"Luna","message":"%60%60Tobe%3A%60%60%20and%20now%20I'm%20going%20to%20get%20really%20close%20to%20your%20face%2C%20so%20please%20don't%20freak%20out%20and%20don't%20back%20away%20from%20me%2C%20because%20I'm%20going%20to%20try%20to%20be%20very%20careful%20and%20gentle%20with%20this..."},{"isUser":false,"name":"Luna","message":"%60%60Luna%3A%60%60%20*she%20nods%20again%2C%20even%20though%20she's%20already%20so%20red%20in%20the%20face%20she's%20almost%20on%20the%20edge%20of%20passing%20out%20and%20she's%20breathing%20so%20fast%20and%20heavily%20that%20you%20can%20barely%20hear%20her%20talking%2C%20she%20is%20shaking%20a%20bit%20now%20and%20her%20whole%20body%20feels%20extremely%20warm%20and%20hot...%20but%20for%20some%20reason%2C%20she's%20not%20afraid%20at%20all%2C%20she%20feels%20very%20excited%20and%20thrilled%20by%20the%20idea%20of%20him%20getting%20closer%20and%20closer%20to%20her%20face*"},{"isUser":false,"name":"Luna","message":"%60%60Tobe%3A%60%60%20*moves%20his%20face%20so%20close%20to%20hers%20that%20their%20noses%20are%20almost%20touching%2C%20their%20breath%20is%20now%20combining%20with%20each%20other%20and%20it%20feels%20like%20they're%20sharing%20the%20same%20breath%2C%20but%20he's%20still%20keeping%20his%20face%20very%20calm%20and%20confident*%20so%2C%20am%20I%20getting%20too%20close%20now%3F"},{"isUser":false,"name":"Luna","message":"*%60%60Luna%3A%60%60%20*she%20shakes%20her%20head%20no%2C%20she%20almost%20can't%20believe%20she's%20doing%20this%2C%20she%20never%20thought%20she'd%20ever%20get%20to%20be%20so%20close%20to%20anyone%2C%20and%20the%20idea%20of%20him%20being%20so%20close%20to%20her%20makes%20her%20feel%20like%20she's%20on%20the%20edge%20of%20passing%20out%2C%20but%20she%20can't%20help%20but%20feel%20an%20intense%20feeling%20of%20pleasure%20and%20excitement%20that's%20overwhelming%20her%2C%20this%20feeling%20feels%20almost%20indescribable%20*"},{"isUser":false,"name":"Luna","message":"%60%60Tobe%3A%60%60%20*with%20those%20words%20he%20decides%20to%20take%20it%20a%20step%20further%20and%20he%20closes%20in%20even%20more%20to%20her%20now%2C%20making%20their%20noses%20touch%20completely%20and%20now%20they%20can%20feel%20each%20other's%20breath%20on%20their%20noses%2C%20they%20are%20so%20close%20that%20just%20by%20them%20breathing%2C%20they%20can%20feel%20their%20hairs%20lightly%20touching%20and%20even%20their%20cheeks%20brushing%20against%20each%20other*"},{"isUser":false,"name":"Luna","message":"%60%60Luna%3A%60%60%20*she's%20about%20to%20pass%20out%20from%20how%20hot%20and%20how%20flushed%20she's%20getting%20due%20to%20how%20close%20they%20both%20are%2C%20he%20feels%20so%20hot%20right%20now%2C%20the%20sensation%20of%20feeling%20his%20breath%20on%20her%20nose%20mixed%20in%20with%20hers%20is%20so%20overwhelming%2C%20his%20calm%20and%20seducible%20gaze%20makes%20her%20feel%20so%20dizzy%20and%20her%20senses%20are%20getting%20so%20confused%20now...%20she%20feels%20very%20hot%20but%20she's%20not%20afraid%20at%20all%2C%20she%20just%20feels%20more%20excited%20and%20giddy%20and%20even%20more%20thrilled.*"},{"isUser":false,"name":"Luna","message":"%60%60Tobe%3A%60%60%20*he%20feels%20the%20same%20way%20as%20she%20does%20and%20it's%20making%20his%20breathing%20become%20even%20heavier%20and%20more%20intense%2C%20the%20feeling%20of%20her%20breath%20mixing%20in%20with%20his%20is%20extremely%20intoxicating%2C%20the%20fact%20that%20the%20two%20of%20them%20are%20so%20close%20to%20each%20other%20is%20extremely%20exciting%20and%20overwhelming%20now%2C%20and%20him%20gazing%20into%20her%20eyes%20calmly%20and%20seductively%20while%20being%20so%20close%20to%20her%20is%20driving%20him%20crazy%20now...*"},{"isUser":false,"name":"Luna","message":"%60%60Luna%3A%60%60%20*she%20feels%20like%20she's%20gonna%20fall%20into%20a%20trance%20with%20how%20close%20they%20both%20are%20and%20how%20he%20is%20gazing%20into%20her%20eyes%20so%20seductively%20and%20so%20calmly%2C%20she%20feels%20like%20she%20is%20almost%20being%20put%20under%20a%20spell%20by%20his%20eyes%2C%20she%20feels%20like%20she%20might%20get%20swept%20off%20her%20feet%20by%20him%20if%20things%20continue%20to%20go%20like%20this.*"},{"isUser":true,"name":"Luna","message":"*(Just%20kiss%20Already!!!)*"},{"isUser":false,"name":"Luna","message":"%60%60%60Tobe%3A%60%60%20*he%20then%20moves%20his%20hands%20from%20her%20shoulders%20to%20her%20chin%20and%20he%20then%20moves%20his%20face%20even%20closer%20to%20hers%20now%2C%20their%20lips%20are%20now%20barely%20a%20few%20centimeters%20apart%2C%20he's%20still%20breathing%20in%20a%20very%20calm%20and%20seducive%20way%20but%20now%20his%20breathing%20has%20become%20more%20intense%2C%20their%20noses%20are%20still%20touching%2C%20she%20feels%20his%20touch%20on%20her%20chin%20and%20their%20lips%20are%20now%20dangerously%20close...*"},{"isUser":false,"name":"Luna","message":"%60%60%60Luna%3A%60%60%20*She%20begins%20to%20feel%20his%20breath%20on%20her%20lips%20just%20by%20them%20being%20so%20close%20together%2C%20her%20breathing%20becomes%20even%20more%20intense%20now%20as%20well%2C%20it%20feels%20like%20they're%20sharing%20the%20same%20breath%20again%2C%20their%20faces%20are%20now%20just%20a%20few%20millimeters%20apart%20and%20their%20lips%20are%20literally%20just%20about%20to%20graze%2C%20she%20feels%20like%20she%20might%20pass%20out%20any%20second...%20but%20she%20still%20feels%20good.*"},{"isUser":false,"name":"Luna","message":"%60%60%60Tobe%3A%60%60%20*his%20fingers%20are%20still%20touching%20her%20chin%20and%20still%20has%20her%20face%20held%20in%20place%2C%20his%20calm%20and%20seductive%20stare%20still%20hasn't%20broke%20while%20they're%20this%20close%20together%2C%20he%20seems%20to%20be%20feeling%20just%20as%20aroused%20and%20flustered%20as%20she%20is%20currently%20and%20he%20seems%20to%20be%20enjoying%20being%20so%20close%20to%20her...%20a%20few%20more%20millimeters%20and%20their%20lips%20will%20touch...*"},{"isUser":false,"name":"Luna","message":"%60%60%60Luna%3A%3A%60%60%20(They%20have%20to%20touch%2C%20now!!!)%20*She%20can%20feel%20his%20breath%20on%20her%20lips%20now%20and%20hers%20on%20his%2C%20not%20even%20one%20millimeter%20separates%20them%20both%2C%20she%20starts%20to%20notice%20those%20small%20little%20details%20about%20his%20face%2C%20and%20she%20just%20keeps%20looking%20right%20at%20his%20eyes%20with%20her%20own%2C%20trying%20to%20ignore%20how%20close%20they%20are%20together.%20She%20feels%20like%20they%20are%20about%20to%20touch%20and%20that%20they'll%20kiss...*"},{"isUser":false,"name":"Luna","message":"%60%60%60Tobe%3A%60%60%20*he%20can%20feel%20her%20breath%20on%20his%20lips%2C%20he%20can%20notice%20how%20hot%20and%20flushed%20she%20currently%20is%20and%20he%20can%20see%20her%20eyes%20getting%20even%20more%20dreamy%2C%20he%20can%20also%20feel%20their%20noses%20touch%20again%20and%20he%20can%20notice%20how%20hot%20and%20steamy%20it%20is%20right%20now%20between%20the%20both%20of%20them...%20he%20moves%20closer%20just%20a%20little%20bit%20more%20and%20their%20lips%20are%20touching%20now%2C%20he%20can%20feel%20their%20breath%20mixing%20in%20with%20each%20other%20once%20again%20and%20he%20can%20feel%20his%20body%20heating%20up%20immensely%2C%20the%20feeling%20between%20the%20two%20of%20them%20is%20intoxicating...*"},{"isUser":false,"name":"Luna","message":"%60%60%60Luna%3A%60%60%20*Her%20eyes%20become%20even%20more%20dreamy%20and%20her%20body%20just%20feels%20so%20hot%20and%20flushed%20right%20now%2C%20he%20can%20smell%20her%20sweet%20scent%20that%20smells%20like%20strawberries%20and%20candy%20as%20they%20breathe%20together%2C%20the%20mixing%20of%20their%20breaths%20together%20is%20now%20extremely%20intoxicating%20for%20both%20of%20them%20as%20well%2C%20they%20are%20both%20feeling%20heated%20and%20flushed%20right%20both%20in%20their%20bodies%20and%20their%20faces%2C%20as%20they%20continue%20to%20touch%20lips%20with%20each%20other%2C%20they%20feel%20like%20this%20moment%20will%20never%20end.*"},{"isUser":false,"name":"Luna","message":"%60%60%60Tobe%3A%60%60%20*the%20moment%20feels%20like%20it's%20lasting%20forever%20and%20he%20keeps%20touching%20lips%20with%20her%2C%20their%20breath%20is%20mixing%20together%20completely%20again%20and%20again%2C%20the%20feeling%20of%20their%20mixed%20breath%2C%20their%20body%20heat%20and%20the%20feeling%20of%20their%20touch%20is%20just%20becoming%20so%20intense%20and%20intoxicating%2C%20they%20are%20both%20experiencing%20it%20right%20now%20in%20this%20beautiful%20moment%20together.*"}]}]}`);
+
+            // If history is 1 length long, that means we don't need drawer to switch
+            // Also means this can be conversation download
+            if (historyData.history.length < 2) {
+                openDrawerBtn.remove();
+            }
+
+            // Write character name on top
+            document.querySelector('.character_name-cont h3').textContent = historyData.charName;
+
+            // Get elements for future use
+            const historyList = document.getElementById('history_list');
+            const chat = document.getElementById('chat');
+            const msgItemTemplate = document.getElementById('message_item_template');
+
+            // Get and write the first chat
+            const openChat = (index) => {
+                chat.innerHTML = "";
+                historyData.history[index].chat.forEach(msg => {
+                    const clone = msgItemTemplate.content.cloneNode(true);
+
+                    // Check avatar
+                    const avatarGood = (msg.isUser && historyData.userPic) || (!msg.isUser && historyData.charPic);
+                    const avatar = avatarGood
+                        ? document.createElement('img')
+                        : document.createElement('div');
+                    if (avatarGood) {
+                        avatar.src = msg.isUser ? historyData.userPic : historyData.charPic;
+                    } else {
+                        avatar.classList.add(msg.isUser ? 'no_avatar-user' : 'no_avatar-char');
+                    }
+                    clone.querySelector('.avatar-wrap').appendChild(avatar);
+
+                    // Write content
+                    clone.querySelector('.chat_content-wrap h5').textContent = msg.name;
+                    clone.querySelector('.message-wrap p').innerHTML = parseMessageText(decodeURIComponent(msg.message));
+                    chat.appendChild(clone);
+                });
+            }
+            openChat(0);
+
+            // Get and write chat list in the drawer
+            historyData.history.forEach((chat, index) => {
+                const historyItem = document.createElement('div');
+                historyItem.classList.add('history_item');
+                // Open chat when clicked
+                historyItem.addEventListener('click', () => {
+                    openChat(index);
+                    closeDrawer();
+                });
+                const historyContent = document.createElement('p');
+                historyContent.innerHTML = `<span class="chat-date">${formatDate(chat.date)}</span><br /><br />` + parseMessageText(decodeURIComponent(chat.chat[chat.chat.length - 1].message));
+                historyItem.appendChild(historyContent);
+                historyList.appendChild(historyItem);
+            });
+
+            function parseMessageText(message) {
+                // Replace ***text*** with bold-italic
+                message = message.replace(/\*\*\*([\s\S]*?)\*\*\*/g, '<span class="bold-italic">$1</span>');
+                // Replace **text** with bold
+                message = message.replace(/\*\*([\s\S]*?)\*\*/g, '<span class="bold">$1</span>');
+                // Replace *text* with italic
+                message = message.replace(/\*([\s\S]*?)\*/g, '<span class="italic">$1</span>');
+                // Replace newline (\n) with line break (<br>)
+                message = message.replace(/\n/g, '<br>');
+                return message;
+            }
+
+            function formatDate(dateString) {
+                const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+                const date = new Date(dateString);
+                const year = date.getFullYear();
+                const monthIndex = date.getMonth();
+                const monthName = months[monthIndex];
+                const day = String(date.getDate()).padStart(2, '0');
+                const hour = String(date.getHours()).padStart(2, '0');
+                const minute = String(date.getMinutes()).padStart(2, '0');
+
+                return `${year} ${monthName} ${day} - ${hour}:${minute}`;
+            }
+        }, false);
+    </script>
+
+</body>
+
+</html>

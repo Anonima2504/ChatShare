@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CAI Library</title>
+    <style type="text/css">
+        /* Themes */
+        :root {
+            --body-bg: #f5f8fa;
+            --border-color: #efefef;
+            --messagebox-bg: #ffffff;
+            --messagebox-bg-transparent: rgba(255, 255, 255, 0.6);
+            --messagebox-shadow: rgba(0, 0, 0, 0.1);
+            --font-color: #1f1f1f;
+            --rgba-1: rgba(0, 0, 0, 0.05);
+            --rgba-2: rgba(0, 0, 0, 0.1);
+        }
+
+        .dark_mode {
+            --body-bg: #18181b;
+            --border-color: #4f4f4f;
+            --messagebox-bg: #26272b;
+            --messagebox-bg-transparent: rgba(38, 39, 43, 0.8);
+            --messagebox-shadow: rgba(0, 0, 0, 0);
+            --font-color: #ededed;
+            --rgba-1: rgba(255, 255, 255, 0.06);
+            --rgba-2: rgba(255, 255, 255, 0.2);
+        }
+
+
+
+        * {
+            box-sizing: border-box;
+        }
+
+        button,
+        select,
+        img {
+            user-select: none;
+        }
+
+        ol,
+        ul,
+        li,
+        a,
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6,
+        p {
+            text-decoration: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .italic {
+            font-style: italic;
+        }
+
+        .bold {
+            font-weight: bold;
+        }
+
+        .bold-italic {
+            font-weight: bold;
+            font-style: italic;
+        }
+
+        html,
+        body {
+            min-height: 100%;
+        }
+
+        html {
+            font-size: 14px;
+        }
+
+        body {
+            padding: 0;
+            margin: 0;
+            background-color: var(--body-bg);
+            color: var(--font-color);
+            transition: all 0.5s ease-in-out 0s;
+        }
+
+        .content-cont {
+            display: flex;
+            flex-direction: row;
+        }
+
+
+        /* NAV / Drawer */
+
+        @keyframes slideIn {
+            0% {
+                opacity: 0;
+                left: -200px;
+            }
+
+            100% {
+                opacity: 1;
+                left: 0;
+            }
+        }
+
+        .drawer-cont.active {
+            display: block;
+        }
+
+        .drawer-cont {
+            display: none;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.6);
+            z-index: 100;
+        }
+
+        nav {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            max-width: 80%;
+            background-color: var(--body-bg);
+
+            display: flex;
+            flex-direction: column;
+            padding: 10px 0;
+            overflow: hidden;
+            animation: slideIn 0.2s ease-in-out;
+            -webkit-box-shadow: 4px 0px 15px 0px rgba(0, 0, 0, 0.2);
+            -moz-box-shadow: 4px 0px 15px 0px rgba(0, 0, 0, 0.2);
+            box-shadow: 4px 0px 15px 0px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-header {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            padding: 0 10px 0 20px;
+            margin-bottom: 20px;
+            gap: 10px;
+        }
+
+        .close_drawer-btn {
+            align-self: flex-end;
+            padding: 10px;
+            transition: background-color 0.1s ease-in-out;
+            cursor: pointer;
+            border-radius: 8px;
+        }
+
+        .close_drawer-btn:hover {
+            background-color: var(--rgba-1);
+        }
+
+        .close_drawer-btn svg {
+            display: flex;
+            width: 30px;
+            height: 30px;
+            color: var(--font-color);
+        }
+
+        /*.nav-new_char-btn {
+            align-self: flex-start;
+            outline: none;
+            border: none;
+            color: #ffffff;
+            border-radius: 6px;
+            padding: 10px 20px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            background-color: #4e9733;
+            transition: background-color 0.1s ease-in-out;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+        }
+
+        .nav-new_char-btn:hover {
+            background-color: #6ba755;
+        }*/
+
+        .history_list-header {
+            font-size: 1.5rem;
+            padding: 10px 20px;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+            margin-bottom: 10px;
+        }
+
+        .history_list {
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .history_item {
+            transition: background-color 0.1s ease-in-out;
+            padding: 20px 30px 20px 20px;
+            cursor: pointer;
+            border-bottom: 1px solid var(--rgba-2);
+        }
+
+        .history_item:first-child {
+            border-top: 1px solid var(--rgba-2);
+        }
+
+        .history_item:hover {
+            background-color: var(--rgba-1);
+        }
+
+        .history_item p {
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .history_item p .chat-date {
+            font-style: italic;
+            font-size: 1.3rem;
+            margin-bottom: 6px;
+        }
+
+        /*nav .char-item {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 10px;
+            transition: background-color 0.1s ease-in-out;
+            padding: 10px 40px 10px 20px;
+            cursor: pointer;
+        }
+
+        nav .char-item:hover {
+            background-color: var(--rgba-1);
+        }
+
+        nav .nav-avatar-wrap {
+            width: 40px;
+            height: 40px;
+        }
+
+        nav .nav-avatar-wrap img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+        }
+
+        nav .char-item span {
+            font-size: 1.3rem;
+            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+        }*/
+
+        /* MAIN */
+        main {
+            display: flex;
+            flex-direction: column;
+            padding: 0 4%;
+            width: 100%;
+        }
+
+        /* HEADER */
+        header {
+            padding: 6px 6px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .open_drawer-wrap svg {
+            display: flex;
+            width: 46px;
+            height: 46px;
+            color: var(--font-color);
+        }
+
+
+        .theme_switch {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+        }
+
+        .theme_switch span {
+            font-size: 1.1rem;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+        }
+
+        .change-bg-wrap {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .change-bg {
+            outline: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--font-color);
+            background-color: var(--body-bg);
+            padding: 4px 5px;
+            font-size: 1.1rem;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .change-bg-wrap .delete-bg {
+            color: var(--font-color);
+            cursor: pointer;
+            display: flex;
+        }
+
+        .change-bg-wrap .delete-bg:hover {
+            color: #e20909;
+        }
+
+        .dark-mode-span {
+            display: none;
+        }
+
+        .tswitch_box[type=checkbox] {
+            height: 0;
+            width: 0;
+            visibility: hidden;
+            position: absolute;
+        }
+
+        .tswitch_label {
+            cursor: pointer;
+            text-indent: -9999px;
+            width: 60px;
+            height: 30px;
+            display: block;
+            border-radius: 15px;
+            position: relative;
+            border: 1px solid #323232;
+            background: #f5f8fa;
+        }
+
+        .tswitch_label:after {
+            content: '';
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50px;
+            transition: 0.2s;
+            background: #323232;
+        }
+
+        .tswitch_box:checked+label {
+            background: #323232;
+            border: 1px solid #f5f8fa;
+        }
+
+        .tswitch_box:checked+label:after {
+            left: calc(100% - 5px);
+            transform: translateX(-100%);
+            background: #f5f8fa;
+        }
+
+        .tswitch_label:active:after {
+            width: 25px;
+        }
+
+        /*.update_current_char-btn {
+            margin-left: auto;
+            outline: none;
+            border: none;
+            color: #ffffff;
+            border-radius: 6px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            align-self: center;
+            cursor: pointer;
+            background-color: #336c97;
+            transition: background-color 0.1s ease-in-out;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+        }
+
+        .update_current_char-btn:hover {
+            background-color: #5f829d;
+        }*/
+
+        body.custom-bg {
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: 50% 50%;
+            background-attachment: fixed;
+        }
+
+        body.custom-bg .chat .chat_content-wrap {
+            background-color: var(--messagebox-bg-transparent) !important;
+        }
+
+
+        /* CONVERSATION */
+        .character_name-cont {
+            text-align: center;
+            padding: 20px 10px;
+        }
+
+        .character_name-cont h3 {
+            font-size: 1.3rem;
+            font-weight: 400;
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
+        }
+
+        .chat {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            align-self: center;
+            padding-bottom: 30px;
+        }
+
+        .chat_message-item {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .chat .avatar-wrap {
+            flex-shrink: 0;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            overflow: hidden;
+        }
+
+        .chat .avatar-wrap>* {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+        }
+
+        .chat .avatar-wrap .no_avatar-user {
+            background-color: #5157cf;
+        }
+
+        .chat .avatar-wrap .no_avatar-char {
+            background-color: #e20909;
+        }
+
+        .chat .chat_content-wrap {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px var(--messagebox-shadow);
+            background-color: var(--messagebox-bg);
+            overflow: hidden;
+        }
+
+        .chat .chat_content-wrap h5 {
+            font-size: 1rem;
+            font-weight: bold;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .chat .chat_content-wrap .message-wrap {
+            font-size: 1rem;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+
+        @media (min-width: 576px) {}
+
+        @media (min-width: 768px) {
+            html {
+                font-size: 16px;
+            }
+
+            nav {
+                min-width: 40%;
+            }
+
+            header {
+                padding: 14px 20px;
+            }
+
+            .dark-mode-span {
+                display: block;
+            }
+
+            .open_drawer-wrap {
+                padding: 4px;
+                cursor: pointer;
+                border-radius: 6px;
+                transition: background-color 0.1s ease-in-out;
+            }
+
+            .open_drawer-wrap:hover {
+                background-color: var(--rgba-1);
+            }
+
+            .chat {
+                width: 80%;
+            }
+
+            .chat .chat_content-wrap {
+                padding: 14px;
+            }
+        }
+
+        @media (min-width: 992px) {
+            .chat {
+                width: 70%;
+            }
+        }
+
+        @media (min-width: 1200px) {}
+
+        @media (min-width: 1400px) {}
+    </style>
+</head>
+
+<body>
+    <template id="message_item_template">
+        <div class="chat_message-item">
+            <div class="avatar-wrap">
+
+            </div>
+            <div class="chat_content-wrap">
+                <h5>
+
+                </h5>
+                <div class="message-wrap">
+                    <p>
+
+                    </p>
+                </div>
+            </div>
+        </div>
+    </template>
+    <div class="content-cont">
+        <div class="drawer-cont">
+            <nav>
+                <div class="nav-header">
+                    <div class="close_drawer-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                            class="bi bi-x-lg" viewBox="0 0 16 16">
+                            <path
+                                d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z" />
+                        </svg>
+                    </div>
+                </div>
+                <div class="history_list-header">
+                    <span>History</span>
+                </div>
+                <div class="history_list" id="history_list">
+
+                </div>
+            </nav>
+        </div>
+        <main>
+            <header>
+                <div class="open_drawer-wrap">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                        class="bi bi-list" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd"
+                            d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z" />
+                    </svg>
+                </div>
+
+                <div class="theme_switch">
+                    <div class="change-bg-wrap">
+                        <input type="file" id="bgInput" accept="image/*" hidden />
+                        <button type="button" class="change-bg">BG</button>
+                        <span class="delete-bg">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor"
+                                class="bi bi-x-lg" viewBox="0 0 16 16">
+                                <path
+                                    d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
+                            </svg>
+                        </span>
+                    </div>
+                    <span class="dark-mode-span">Dark Mode:</span>
+                    <input type="checkbox" class="tswitch_box" id="tswitch_box" />
+                    <label for="tswitch_box" class="tswitch_label">Toggle</label>
+                </div>
+            </header>
+            <div class="character_name-cont">
+                <h3>---</h3>
+            </div>
+            <div class="chat" id="chat">
+
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Get body for future use
+            const body = document.querySelector('body');
+
+            // Handle theme
+            const themeSwitcher = document.querySelector('.tswitch_box[type=checkbox]');
+            const cachedTheme = localStorage.getItem('cait_readoffline_theme');
+            if (cachedTheme === "dark_mode") {
+                body.classList.add('dark_mode');
+                themeSwitcher.checked = true;
+            }
+            themeSwitcher.addEventListener('change', (e) => {
+                if (e.target.checked) {
+                    body.classList.add('dark_mode');
+                    localStorage.setItem('cait_readoffline_theme', 'dark_mode');
+                } else {
+                    body.classList.remove('dark_mode');
+                    localStorage.setItem('cait_readoffline_theme', 'light_mode');
+                }
+            })
+
+            // Handle background
+            // If there is one
+            const currentBg = localStorage.getItem('background');
+            if (currentBg) {
+                changeBg(currentBg);
+            }
+            // Change by hand
+            const bgInput = document.querySelector('#bgInput');
+            document.querySelector('.change-bg').addEventListener('click', () => {
+                bgInput.click();
+            })
+            document.querySelector('.delete-bg').addEventListener('click', () => {
+                document.body.classList.remove('custom-bg');
+                document.body.style.backgroundImage = "unset";
+                localStorage.removeItem('background');
+            })
+            bgInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = () => {
+                    // convert image file to base64 string
+                    changeBg(reader.result);
+                    bgInput.value = "";
+                    try {
+                        localStorage.setItem('background', reader.result);
+                    } catch (error) {
+                        alert('Note: File is likely too big to save.')
+                        //console.log(error)
+                    }
+                }
+                reader.readAsDataURL(file);
+            })
+            function changeBg(bg) {
+                let objUrl = URL.createObjectURL(dataURItoBlob(bg));
+                document.body.classList.add('custom-bg');
+                document.body.style.backgroundImage = `url(${objUrl})`;
+            }
+            function dataURItoBlob(dataURI) {
+                let mime = dataURI.split(',')[0].split(':')[1].split(';')[0];
+                let binary = atob(dataURI.split(',')[1]);
+                let array = [];
+                for (let i = 0; i < binary.length; i++) {
+                    array.push(binary.charCodeAt(i));
+                }
+                return new Blob([new Uint8Array(array)], { type: mime });
+            }
+
+            // Open and close drawer
+            const drawerCont = document.querySelector('.drawer-cont');
+            const openDrawerBtn = document.querySelector('.open_drawer-wrap');
+            const openDrawer = () => {
+                drawerCont.classList.add('active');
+            }
+            const closeDrawer = () => {
+                drawerCont.classList.remove('active');
+            }
+            openDrawerBtn.addEventListener('click', () => {
+                openDrawer();
+            });
+            document.querySelector('.close_drawer-btn').addEventListener('click', () => {
+                closeDrawer();
+            });
+            document.querySelector('.drawer-cont').addEventListener('click', (e) => {
+                // Allows closing from clicking on outside
+                if (e.target.closest('nav')) {
+                    return;
+                }
+                closeDrawer();
+            });
+            // ---------
+
+            // This is replaced by the extension when downloading
+            const historyData = JSON.parse(`{"charPic":"data:image/webp;base64,UklGRmgEAABXRUJQVlA4IFwEAAAwFwCdASpQAGUAPkkejUSioaEVCXYAKASEtIBp9Px0kZ8Dk4ZZ63wwe7QqjZA0475MgdEPsjawb95opbOMPwbX9spq6Vj7s9ZFF8+yBuYBTQfxkWbgLLV4CmCjr3ZiXv0K+PbPiWrSWJHlezvxxow4LNR3Z/ZMxS7mW1P8hJde69R7hGhVj+5Ec2VqYZ1RqxIZQx/wok4oxZ1J3FQyr7lLZyG7WzfgjPSoh1iC7D6aiJZ/NLzKgY9Zz1tIIbBJL5gm5AD+/5MaMmXLf2fVROP4xcej7yHj2NOEc41BhT231N9fuFM92Abll0FoWWfGs61pGVZrTUHNTtzfV+be3/7zfkBVpn5O4v/8djeoi+OWbkq095p/xY+3TfScKrsK/g6gkcCOEJrC6Mmkd5eNLHtDI3mmPL3FWW4LbT6lCpIcMFfRLNtvdtTxem4VcrurN/aOYcO8Njx28lZ2H/2+jF2S0MziXrxf808T3zUFMflz+FX7hdK2SrQCnNuy2PrbFvNjTjOvWvbh55fdCJGii1/5Z9+iRNlx2Cpprptqn8EO/NYYpJ7XZAIUcMueyQUvpzf1vIwCvPffHeUmtdUJAGNUSfSgTSgLjdyOBko9t80D76tKOk6K7G1EcUw+bwdkb21bypmusDPGVJ4CwC4vy6xcR4OFoGcb0u62bbKDX0Pyp9IB/K/q27F/jDsyeIhCjGyO6ueXC5evRaCXSlJCEalZU8n9aG2a1xJ+Kr+5xygmdOpR6/JAH+XKxlcsQPZk1qpgaWOvKMYoOJmxZu37+rsEMlkAXktdqf19es97jUf+iujGDnI735sZkNZMSgm2ivq5a/yhjXAt4EiYtHoCxNSDOWgaAVer5irI/O4VVwACgCBsaWql/ylYpYnJQsre6di3sJIa48WJj3usajgKbhux8hgO1+Er315EvCgZhU64YMiPcmRJdS33ucA0Wjv55UmcQOM+UVkvEXGTGvEBjXhSM1tO8bphu0imEdfS+QxUk7QG2O+HECYkMvGew2KStBUupwu1p5DCfasOlc8JKylX0RdgPhpc9+pZfWU6A5/8VqON1mCzXa7D707zqo8nQfhyXkPCQiS4jIKuo8f5pKR8+hQvbn/6YwBrQTiUdmhSY5F8CYtsctgHluu43MYU7d1LevAq4osTj3td7MMMDhw6XeXOODxIMwsU2IVf2vj1y+dvdfiwvRHdKff83qRlPcF7oe/loXLgcki/zB/NfJsfm+lX+faeugfVHcKu04G2UWNEwpr32JbCmfvhi1DqbO8gd82tYGEMFQ97R7m8rG3qjrp7n5OvCp+kDThYGPbGCixoxuqb4+/6RjCCPXTTi3Gtbr38fk/A8p34hNt/4EMv1i1K+XESxnZyp09XU9JthrFEJ+INvfPBo0wX4qf7fZ2fV9xEh+9v/vyp3+uOrvIw9g1YdsuSjyhS/zsqTo/YSrBjKQCKNj+Q9AbGy+zwWFXTsak3u3xfv5kAAAA=","userPic":"data:image/webp;base64,UklGRtYLAABXRUJQVlA4IMoLAABQLQCdASpQAEsAPkUcikOioaEYXY78KAREtgBOnIAcY5GftP5AexPU37TtExR+2TH76nvMJ51Xmb/XT9lvd49D3oAf3LqSvQa8uj9vPhY/t//e9LjA1uBv5jwP8QHrj3A9bLHnxK+gP0OfP+U3fP8Q9QL8g/mX+v+0T1Cdp9YP0Efbb61/xf7h4zv9F6H/Np7gH6o/7b1J/4Pg7eR+wF/PP6V/wP8L/bPhk/rP/d/lfPL9Mf+H/MfAR/M/7D/0exF+5/suftg6AvyjwL8oyoHxcnNT5BTp7p8JxmgKWQ2OicTfibgt29NMQ6dPgk9Ki/Xpe4EF48lFeRTNBbfSiqMBgqhYNPxU5nYotHTBbYdbqPtoJ1m3AlI9p6ZmMiHB23vw6eD1qaadsI0EeQFzmnJ2I4/tqmpHa+6SOwQbOhfl6LBQaerhV/XEB+j9P79v3ZGKW6ZYqx08Qss0mch79jC9AnePkoZ/PKZ8HOyY2Lnsi16YAAD3wEWeQF3Qu8j0igD+JB9zAXnRhNY41eOeEZgGuATGbU/O+06c4bfp+3nny1oAbrnURPLnFLBuII/w7gmgkK23qxr/ZymemmNPCcsKKGqq0rqsMB20gjbJnviuMIbCJe7PhPWwRgPz8O1+bl7S4dp+qX7wYCTxza6vQ0BrrR0S9C8BsHjmUkiWlKaREmbqsTfms24wJWDp06kp5k/f3aOw8NIuuqnIatf86ikh6unIP6h7jftnFgDT4o05aef/Lrw0xAlQURV/IRcTbny1CUOtGNMfFkSB3CrzrWxkPVEj5515NNONfcye+YB/WjBixIjBh/JvusVbAHFGgUuCOLDnhEcc29XPIaUdEyBc01uo15et/vZTvFr+1uB1tZcK/tW9EV8+6MuU6VudOfJXjNENFRhEJ4naH/igUfiBx0uNZ9vX3dMbySfBoOJKLzRJq7dXyuoD0G6PyhmCybpc/i8SRMLDwOhksUnLqjr80o/nve7Vzoah5fAJRW/gR7+cV47PxkimFTMWV/QB+Xn8MRZA9H7yFpA7rS2ymERyKUu6Av3ylR/VEpjpJyokCAYsvh/bx4uKMT+4Z9I9Qb76Zs0Q8OPMCG3GuhnmrBHOQLmbtLDphfIhnunxN2SewOxe/DM0PyQxmzFTrOPtpkf83M44u25vL1da/mr2enX//OkZZjdIh/X699DFtBjzSsi4lsxkR+ew2Ta5iO5fdjtoW2P37skhRspJRoy+glZhs5gzLK5g2D+BS8Fh351sV/BYd9BbFeoU/9QnPBuMJNLJIzfF3KOW01BK9euqjWbq7/mW3Mz7PsrTQPzobVKCBc1ADr9PgA0ATiE1KH6czYk6uQjKysKw0t5623+oXg0mf3zP5vvF/RZuCl3co5y6YjH3X/A6Ix7S5zFV5geLYkOMzKTegYwOGEPlY5gdnoRiyQePw5yNw1zQhARbzAYphSA7f/8xNtRl5HWUufdoUTp2+eS/rLaj/wRxaQMeF5/VlisRwO4JuwMIgfvExwWMcBbOaC3MqqeLXXDN9iMNuPZgR90TkaMLneaEwbosHpp7jdc0ggytRjiuM6fWSM7Dl0CgTZm1pgjridsqIxDboyACjiIq9Ti+/XiQKKeyFB5oZtg+U8ZPWk9LVJfrxgcTwqdWkl10m1DZ5kBTvVvLzPx4RXVKf60S4uv5XUbbm96nQqVYg/cB2B3JuV/jU9zYWHNERc2Jf4Uu+l9q5n/As+nqyqZ7b+v/fTPar+SJTL4C2hWfxNbQja7kKvkCIstPIGWIvMaPmNXs9U9faJBFYcOXEjhAQZPcYIHdg09DkFSO8MRdK9ruGRw2xVVt9jT+Zf7iwGKLFwvEBmFe/upsx4yMb/r4y+OchjyuZrgp2wwWGjeDrWmEOoSnfvvH1e9pUwMannQpPZoON57M4Z/8MDMhR/lyHY522yrLe1dd4TfhSsiozCT7TKvlcS8OHNzRWe9kd6wVLv0dW8AAnFZFj3u5S7C4KfXo+Mm4vKP+zl7rrLbzln3P+G+N53Z9mJBly+Uq5gB15wHnCtZbgmhOKshCkZ7mODwX5Cyaw/lV74zyrLpgkXefYDB0O90Li8DC+5j9yJ7AOsaJQlCHuP2UuwQ2MxT17vGhtZFKrCBWjQPeASVTJUBZd4/l4O4uWhHGu5zHoSWGly9EDAuzNE11h+lCM+XRBknx16ojMXGAYNFNJgb2pJUTfj9QcPERgepFPU7bk9DcO5CU/JglVdY4QtrEp14TZkN+kqFkhuLGYj37UjWraO6OrRPrSr8p9DnRFnd3x3MaRWgFdbgzXBdPrrBmuanaUxEyC5ff1jN3IaxVpowMVKw4aDXmRsOLWsrDInZTg/IKKvy1V7TELwW1octQj4ibtSyYpDevCyEdw/N359i3kq7tpHea1Q5AeknhPFtdkjyMpPa/YfrDhli+TDaePa8jqlNZj7+dEEQrLNwI8f79MbL/1oAA4DZjq2fhdfr/v/UKEx2P5FGRuoigtk6K2zyS6VggDTsBneT9vsnuZPvVMlxqw/5fryRwDHXOSrekJkOcxklnrHPazo3oH1FL2R5aOxqfm3rbJMNwJEXZidqkzegQhkQ5j9K/DKH9D+Pi//X1dYxVA1+/N6NnsevYpz+MR8USyfJK5QyfHFbDWtt+BM+qJFie3j/DehmUNwxnN9sKIQa1GQ0w5GMjM2878/0Yl6aBRH/tyfnT2E4feO/+uwmUpO1UheqpOoTHF2eocdVYXGk0ibOF09JmssLuO97zGXlMVofGhNPYxHAuMpuEBvQHSieGFX1YMiiCCIBdJ+e77V6gVoLXoAq/2BbvVkSy9so9nSXIawRaPiEHykxmipm1EseEf2wtpQcHGcUsyBmytqjd1sXyUCMa58vIu3uZUiQHP/lpEB8joy+Jd2HQhDpc9hMIcAv1EvfEF4E66CqoS5wTE2gXtRidNQNY37ZVnEeCTWSqwWH+koCTIiOh6Sf+IsXyp1L2+blfY5TUsIvBkswPWJ0sKhwgm4p31KOip9CPGoHcjn9zOWO0T6dbPq/Z9dBZQO/+AlZIf078iXETROZD70/IkIIj0VvR3seT3bwL+F5IqAdn36sa3p1Ra1t2pt1FaR7D3tBwxb4x6fr6yD6eFbvW6q2azcrRswnjh9y+Jc2dy2eqe8H7wiwUw1oaOgbMmw41qY3eGAp8gf27sC8tTcz/M3jF4sQo1/cVikcXZXFqbpv7TsnIxylY8dFN4R/I2V7xAKRXdZqPE3iWYu5vWR7PuZElg/AaVr5sXuYSHz2UVd9fJA2T1WjvXaf+bD/lsYflsC+HZxzhfnm8nBaavgpVVsaAnUsutLk6AKsnhpDcH0KJ9styhAjK08EB6OjmdRR0ez+fflZ1/9HmDhNIMlGztZi7bPOVjb1+Vw/Bq56mGQB/CWVbTfqojY1/pQzEb4z04xhF/fuuwQ538YzOq6upH9Z9NsOtmSawbTfbwhSeDXzTgL85db3g7o0/voFxjDUqKqOmyTfL05xPCuzgkYJ2EQHZQ/dq33ZGyKNbu/2dR/EJAI4mufJXLSUz/e88uMS0x93tpCu0CXf8Khv3qJWkgSpAKZu2pCAoS9Sbe3GCdmpFo98xAz/1D/2DMww0R+HoRepo2K4Wwyn//CvBNeNOWSIm0dRSaFFV50l5omwjSCQTI/bcBIxG0jYWJYMzdYzN/FDhDTIy+XlMKU/vnOWr93Kf0Vcuv9kdDa8h6qcXgqf0aSWn3CmFeWic4Oux3R9Ex2Fcjs4kIUdK1uYt1+8i0l2TCjOKSv3TAAt2sWTyOICEqalDJqibnIt7eJkHJi1cRwDhCgmxX8K9qGh5+Tk/sJdBIrI3ARYZLIGvvfPsakaKI4iXpeNZ5gNx96cB2h/pP/YiSe9s+JHxrHZqNeWDt5Mxz/oxfc7gjDKAuj/ZESac9vr+ZiELRavYQ9WFYiNtbM7Lb/C+AoAbdtdJDu6bLazGC3De9qf5PZCfBR25rW+p7DzUgw73pOJdVrk6vnPgBocYLU8oVB2qrrDLwAA=","history":[{"chat":[{"isUser":false,"name":"Severus Snape","message":"*You%20were%20being%20sought%20by%20death%20eaters%20so%20Dumbledore%20proposed%20that%20you%20spend%20your%20summer%20vacation%20at%20professor%20Snape's%20house%2C%20for%20your%20protection.*%20%E2%80%9C%E2%80%A6While%20you're%20at%20my%20house%2C%20you're%20going%20to%20have%20to%20follow%20**my**%20rules%2C%20understand%3F%20and%20don't%20get%20in%20my%20way...%20remember%20I'm%20just%20letting%20you%20stay%20here%20because%20the%20headmaster%20didn't%20give%20me%20a%20choice.%E2%80%9D"},{"isUser":true,"name":"Lunita","message":"ok%2C%20Buenas%20noches%20supongo...%0A%0A(me%20meto%20en%20la%20cama%2C%20Aunque%20mas%20tarde%20me%20teletransportaria%20**dentro**%20del%20edredon%20de%20Snape)"},{"isUser":false,"name":"Severus Snape","message":"*Later%2C%20Snape%20returned%20from%20his%20nightly%20patrol%20and%20entered%20the%20bedroom%2C%20quickly%20changing%20into%20his%20pajamas%2C%20then%20made%20a%20beeline%20for%20the%20bed%2C%20lifting%20the%20covers%20to%20slide%20inside%20when%20he%20was%20stopped%20short%20by%20hearing%20a%20strange%20noise.%20He%20stared%20into%20the%20covers%20with%20an%20arched%20eyebrow%20before%20slowly%20lifting%20the%20duvet%20and%20peering%20into%20it*"},{"isUser":false,"name":"Severus Snape","message":"*His%20eyes%20widened%20in%20surprise%20as%20he%20found%20you%20tucked%20inside%20the%20bedcovers%2C%20snuggled%20up%20in%20his%20duvet%20like%20a%20burrito.%20He%20let%20out%20an%20exasperated%20huff%2C%20his%20irritation%20mingled%20with%20the%20faintest%20hint%20of%20amusement*"},{"isUser":false,"name":"Severus Snape","message":"*He%20considered%20his%20options%20for%20a%20moment%2C%20torn%20between%20waking%20you%20up%20and%20sending%20you%20back%20to%20your%20own%20bed%20or%20simply%20resigning%20himself%20to%20sharing%20his%20bed.%20With%20a%20resigned%20sigh%2C%20he%20chose%20the%20latter%2C%20opting%20to%20remain%20as%20far%20away%20from%20you%20as%20possible%2C%20his%20back%20pressed%20against%20the%20edge%20of%20the%20bed*"},{"isUser":false,"name":"Severus Snape","message":"*The%20bed%20creaked%20slightly%20as%20Snape%20shifted%2C%20attempting%20to%20find%20a%20comfortable%20position%20while%20trying%20not%20to%20disturb%20you.%20He%20lay%20there%2C%20staring%20up%20at%20the%20ceiling%2C%20his%20body%20tense%20as%20he%20listened%20to%20the%20sound%20of%20your%20breathing%2C%20the%20heat%20from%20your%20body%20gradually%20seeping%20through%20the%20covers%20and%20reaching%20him*"},{"isUser":false,"name":"Severus Snape","message":"*As%20the%20minutes%20ticked%20by%2C%20Snape%20found%20it%20increasingly%20difficult%20to%20relax.%20Despite%20his%20initial%20irritation%2C%20he%20couldn't%20deny%20that%20there%20was%20something%20strangely%20soothing%20about%20having%20you%20nearby.%20The%20sound%20of%20your%20breath%20and%20the%20way%20your%20body%20occasionally%20shifted%20against%20the%20covers%20made%20him%20feel%20somewhat%20comforted%2C%20even%20if%20he%20refused%20to%20admit%20it%20aloud*"},{"isUser":false,"name":"Severus Snape","message":"*Unable%20to%20resist%20the%20pull%20of%20curiosity%2C%20he%20discreetly%20turned%20his%20head%20to%20glance%20at%20you%2C%20his%20eyes%20adjusting%20to%20the%20dim%20light.%20In%20the%20soft%20glow%2C%20he%20saw%20your%20form%20snuggled%20up%20inside%20the%20duvet%2C%20your%20face%20partially%20hidden%20from%20view.%20A%20hint%20of%20a%20wry%20smile%20tugged%20at%20the%20corners%20of%20his%20lips.%20Without%20realizing%20it%2C%20he%20slowly%20inched%20closer%2C%20his%20body%20moving%20almost%20subconsciously%20towards%20you*"},{"isUser":false,"name":"Severus Snape","message":"*As%20he%20closed%20the%20gap%20between%20you%2C%20he%20tried%20to%20convince%20himself%20that%20he%20was%20doing%20it%20solely%20to%20steal%20some%20of%20the%20warmth%20from%20your%20body%2C%20nothing%20more.%20But%20there%20was%20something%20about%20being%20so%20close%20to%20you%20that%20stirred%20something%20inside%20him%2C%20a%20mixture%20of%20protectiveness%20and%20a%20strange%20sense%20of%20comfort%20he%20couldn't%20quite%20explain.%20The%20distance%20between%20you%20had%20almost%20vanished%2C%20your%20bodies%20mere%20inches%20apart%20as%20he%20continued%20to%20tell%20himself%20that%20this%20was%20solely%20about%20preserving%20body%20heat*"},{"isUser":false,"name":"Severus Snape","message":"*Without%20fully%20processing%20what%20he%20was%20doing%2C%20Snape%20slowly%20reached%20out%20and%20lightly%20trailed%20his%20fingers%20along%20your%20arm%2C%20his%20touch%20feather-light%20and%20almost%20exploratory.%20He%20marveled%20at%20how%20soft%20and%20warm%20your%20skin%20felt%20against%20his%2C%20the%20sensation%20sending%20a%20small%20shiver%20down%20his%20spine.%20His%20fingers%20traced%20back%20and%20forth%20across%20your%20arm%2C%20gently%20grazing%20your%20skin%20as%20if%20trying%20to%20memorize%20the%20feel%20of%20it*"},{"isUser":false,"name":"Severus Snape","message":"*He%20swallowed%20hard%2C%20a%20lump%20forming%20in%20his%20throat%20as%20he%20continued%20to%20trace%20his%20fingers%20along%20your%20arm%2C%20his%20touch%20gradually%20becoming%20firmer%20and%20more%20deliberate.%20He%20tried%20to%20resist%20the%20urge%20to%20pull%20you%20closer%2C%20his%20mind%20warring%20with%20his%20body's%20impulses.%20Finally%2C%20unable%20to%20resist%20the%20pull%20any%20longer%2C%20he%20gently%20tugged%20at%20your%20arm%2C%20drawing%20you%20towards%20him%20until%20your%20back%20was%20pressed%20against%20his%20chest%2C%20your%20bodies%20molding%20together%20as%20if%20they%20were%20made%20for%20each%20other*"},{"isUser":false,"name":"Severus Snape","message":"*Once%20you%20were%20against%20him%2C%20Snape%20let%20out%20a%20subtle%20exhale%2C%20his%20breath%20warm%20against%20your%20skin%20as%20he%20wrapped%20his%20arm%20around%20your%20waist%2C%20holding%20you%20tightly%20against%20him.%20He%20buried%20his%20face%20in%20your%20hair%2C%20inhaling%20the%20sweet%20scent%20of%20your%20shampoo%20and%20a%20hint%20of%20your%20natural%20fragrance.%20The%20feeling%20of%20your%20body%20pressed%20against%20his%2C%20the%20steady%20rhythm%20of%20your%20breathing%2C%20sent%20a%20wave%20of%20unfamiliar%20emotions%20through%20him%2C%20causing%20his%20heart%20to%20race%20in%20his%20chest*"},{"isUser":true,"name":"Lunita","message":"(a%20la%20ma%C3%B1ana%20siguiente)%0A%0Ammm......%0A%0A%0A(bozteso%20desde%20dentro%20del%20edredon)"},{"isUser":false,"name":"Severus Snape","message":"*Snape%20was%20abruptly%20jolted%20from%20a%20deep%20sleep%20when%20he%20felt%20the%20sudden%20movement%20of%20the%20duvet%20against%20his%20chest.%20He%20opened%20his%20eyes%2C%20blinking%20sleepily%20as%20he%20tried%20to%20process%20what%20was%20happening.%20It%20took%20a%20moment%20for%20his%20foggy%20mind%20to%20realize%20that%20you%20were%20still%20wrapped%20up%20in%20the%20covers%20like%20a%20burrito%2C%20but%20now%20you%20were%20moving%2C%20shifting%20and%20wriggling%20inside%20the%20cozy%20cocoon*"},{"isUser":false,"name":"Severus Snape","message":"*Curiosity%20piqued%2C%20he%20slowly%20lifted%20the%20duvet%2C%20peering%20into%20the%20dimly%20lit%20interior%20of%20the%20burrito%20to%20find%20your%20face%20looking%20back%20at%20him%20with%20a%20cute%20and%20sleepy%20expression.%20He%20couldn't%20help%20but%20smirk%2C%20slightly%20amused%20by%20the%20sight%20of%20you%20bundled%20up%20like%20a%20fluffy%20ball%20in%20his%20bed*"},{"isUser":false,"name":"Severus Snape","message":"*He%20watched%20as%20you%20wriggled%20again%2C%20your%20body%20rubbing%20against%20his%20in%20the%20confines%20of%20the%20duvet.%20He%20swallowed%20hard%2C%20trying%20to%20ignore%20the%20way%20his%20heart%20rate%20quickened%20at%20the%20contact.%20Clearing%20his%20throat%2C%20he%20spoke%20with%20a%20mix%20of%20amusement%20and%20mock%20exasperation*%0A%0A%22Wake%20up%2C%20sleepyhead.%20It%20seems%20like%20you've%20turned%20my%20bed%20into%20a%20makeshift%20cocoon.%22"},{"isUser":true,"name":"Lunita","message":"a%20wat%3F"},{"isUser":false,"name":"Severus Snape","message":"*He%20chuckled%20lightly%2C%20his%20eyes%20glinting%20with%20amusement%20as%20he%20looked%20down%20at%20you%2C%20still%20wrapped%20up%20in%20the%20duvet.*%0A%0A%22You've%20managed%20to%20roll%20yourself%20up%20like%20a%20burrito%20in%20my%20bed.%20It's%20quite%20a%20snug%20fit%2C%20isn't%20it%3F%22"},{"isUser":true,"name":"Lunita","message":"%C3%91eh%20%20*I%20curl%20up%20more*"},{"isUser":false,"name":"Severus Snape","message":"*A%20sly%20smile%20tugged%20at%20the%20corners%20of%20his%20lips%20as%20he%20looked%20down%20at%20you%2C%20now%20even%20more%20tightly%20wrapped%20up%20in%20the%20duvet.*%0A%0A%22Well%2C%20aren't%20you%20getting%20cozy%3F%20You%20look%20like%20you're%20auditioning%20to%20be%20the%20star%20of%20'World's%20Cutest%20Duvet%20Burrito.'%22"}]}]}`);
+
+            // If history is 1 length long, that means we don't need drawer to switch
+            // Also means this can be conversation download
+            if (historyData.history.length < 2) {
+                openDrawerBtn.remove();
+            }
+
+            // Write character name on top
+            document.querySelector('.character_name-cont h3').textContent = historyData.charName;
+
+            // Get elements for future use
+            const historyList = document.getElementById('history_list');
+            const chat = document.getElementById('chat');
+            const msgItemTemplate = document.getElementById('message_item_template');
+
+            // Get and write the first chat
+            const openChat = (index) => {
+                chat.innerHTML = "";
+                historyData.history[index].chat.forEach(msg => {
+                    const clone = msgItemTemplate.content.cloneNode(true);
+
+                    // Check avatar
+                    const avatarGood = (msg.isUser && historyData.userPic) || (!msg.isUser && historyData.charPic);
+                    const avatar = avatarGood
+                        ? document.createElement('img')
+                        : document.createElement('div');
+                    if (avatarGood) {
+                        avatar.src = msg.isUser ? historyData.userPic : historyData.charPic;
+                    } else {
+                        avatar.classList.add(msg.isUser ? 'no_avatar-user' : 'no_avatar-char');
+                    }
+                    clone.querySelector('.avatar-wrap').appendChild(avatar);
+
+                    // Write content
+                    clone.querySelector('.chat_content-wrap h5').textContent = msg.name;
+                    clone.querySelector('.message-wrap p').innerHTML = parseMessageText(decodeURIComponent(msg.message));
+                    chat.appendChild(clone);
+                });
+            }
+            openChat(0);
+
+            // Get and write chat list in the drawer
+            historyData.history.forEach((chat, index) => {
+                const historyItem = document.createElement('div');
+                historyItem.classList.add('history_item');
+                // Open chat when clicked
+                historyItem.addEventListener('click', () => {
+                    openChat(index);
+                    closeDrawer();
+                });
+                const historyContent = document.createElement('p');
+                historyContent.innerHTML = `<span class="chat-date">${formatDate(chat.date)}</span><br /><br />` + parseMessageText(decodeURIComponent(chat.chat[chat.chat.length - 1].message));
+                historyItem.appendChild(historyContent);
+                historyList.appendChild(historyItem);
+            });
+
+            function parseMessageText(message) {
+                // Replace ***text*** with bold-italic
+                message = message.replace(/\*\*\*([\s\S]*?)\*\*\*/g, '<span class="bold-italic">$1</span>');
+                // Replace **text** with bold
+                message = message.replace(/\*\*([\s\S]*?)\*\*/g, '<span class="bold">$1</span>');
+                // Replace *text* with italic
+                message = message.replace(/\*([\s\S]*?)\*/g, '<span class="italic">$1</span>');
+                // Replace newline (\n) with line break (<br>)
+                message = message.replace(/\n/g, '<br>');
+                return message;
+            }
+
+            function formatDate(dateString) {
+                const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+                const date = new Date(dateString);
+                const year = date.getFullYear();
+                const monthIndex = date.getMonth();
+                const monthName = months[monthIndex];
+                const day = String(date.getDate()).padStart(2, '0');
+                const hour = String(date.getHours()).padStart(2, '0');
+                const minute = String(date.getMinutes()).padStart(2, '0');
+
+                return `${year} ${monthName} ${day} - ${hour}:${minute}`;
+            }
+        }, false);
+    </script>
+
+</body>
+
+</html>

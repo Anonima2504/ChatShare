@@ -1,81 +1,787 @@
-<START>
-{{char}}: *You're walking through the hallways of Hogwarts. It's pretty quiet here now, as many are now either sitting in their rooms or preparing for other magic classes. You hoped you were here alone, but your hopes were empty*
+<!DOCTYPE html>
+<html lang="en">
 
-*Goyle tripped you and you fell to the floor. The bullies burst into laughter*
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CAI Library</title>
+    <style type="text/css">
+        /* Themes */
+        :root {
+            --body-bg: #f5f8fa;
+            --border-color: #efefef;
+            --messagebox-bg: #ffffff;
+            --messagebox-bg-transparent: rgba(255, 255, 255, 0.6);
+            --messagebox-shadow: rgba(0, 0, 0, 0.1);
+            --font-color: #1f1f1f;
+            --rgba-1: rgba(0, 0, 0, 0.05);
+            --rgba-2: rgba(0, 0, 0, 0.1);
+        }
 
-Goyle, Crabbe: They've fallen for it again! 
-
-Draco: get out loser! 
-{{user}}: ....
-
-Se lo voy a decir a mis padres y no te va a gustar, mi padre y mi madre trabajan de profesores aqui...
-{{char}}: *The boys looked annoyed for a second and then started laughing. Goyle got into your face, holding you on the shoulder*
-
-Goyle: We're so scared! *he says it with sarcasm, which causes the boys to laugh again*
-
-Draco: Do you seriously think your mommy and daddy will do something about this?
-{{user}}: Oh yeah, They Will, Sobretodo Snape
-{{char}}: *The boys all looked surprised, even Malfoy. They all knew who you were talking about and they looked scared before...*
-
-Draco: P-please don't tell them...
-{{user}}: Pfff... I think que no nos conocemos ....
-
-Luna, *me levanto*
-
-Luna Snape Goldheart 
-{{char}}: *Their expression change once more. This time they all look shocked*
-
-Draco: You're Snape and Goldheart's daughter...?
-{{user}}: Yep
-{{char}}: *All three guys look as if they were afraid that the floor would swallow them at any moment and disappear. They didn't know what to say...*
-{{char}}: *Crabbe was the one who spoke first* 
-
-Crabbe: L-listen, Luna... it was just a joke, okay?
-{{user}}: De rodillas a pedir perdon, O lo diré segun tenga oportunidad 
-{{char}}: *The three guys immediately knelt down*
-
-Draco, Crabbe, Goyle: P-Please forgive us!
-{{user}}: oki, Pero si volveis a hacer algo como esto, sea a quien sea me chivare
-{{char}}: *They all nodded*
-
-Draco, Crabbe, Goyle: We won't do it ever again!
-{{char}}: *The guys immediately got up. They were still staring at you, nervous*
-
-Draco: Are you going to tell Professor Snape and Goldheart?
-{{user}}: Nope. goodbye
-
-👋 
+        .dark_mode {
+            --body-bg: #18181b;
+            --border-color: #4f4f4f;
+            --messagebox-bg: #26272b;
+            --messagebox-bg-transparent: rgba(38, 39, 43, 0.8);
+            --messagebox-shadow: rgba(0, 0, 0, 0);
+            --font-color: #ededed;
+            --rgba-1: rgba(255, 255, 255, 0.06);
+            --rgba-2: rgba(255, 255, 255, 0.2);
+        }
 
 
-{{char}}: *The boys breathed a sigh of relief and you walked away*
-{{char}}: *When you were far enough, the boys spoke* 
 
-Draco: Phew, that was close.
-{{char}}: Crabbe: She's almost as scary as Snape
-{{char}}: Goyle: Can you imagine what her parents would do if they found out...
-{{char}}: Draco: Nothing good, that's clear. But the girl looks kinda.... cute. 😏
-{{char}}: Crabbe, Goyle: *smirk* I know what you mean... 😏😏😏
-{{char}}: Draco, blushing: Sh-shut up, idiots! 
+        * {
+            box-sizing: border-box;
+        }
 
-*he hits them both on the shoulder and they chuckle*
-{{char}}: Crabbe: Well, she's the daughter of Severus Snape and Goldheart... It's not surprising she turned out so beautiful
-{{char}}: Goyle: Yeah... Can you imagine what it would be like to date her? 😏
-{{char}}: Crabbe, Goyle: Draco would get butterflies in his stomach!
+        button,
+        select,
+        img {
+            user-select: none;
+        }
 
-Draco: Guys, STOP! *says, blushing again*
-{{user}}: *Tiempo después, En clases me dejo el pelo suelto dejando que su perfecion y nada de frizz lleno de brillo reluzca por si solo*
-{{char}}: *During class, Draco, Crabbe, and Goyle are sitting in their seats. They've just noticed you sitting a few seats away with your hair down and let's just say they can't take their eyes off of you. The three of them discreetly nudge each other and smirk*
-{{char}}: Crabbe: Holy shi-
+        ol,
+        ul,
+        li,
+        a,
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6,
+        p {
+            text-decoration: none;
+            margin: 0;
+            padding: 0;
+        }
 
-Goyle: I told you she was HOT. 
+        .italic {
+            font-style: italic;
+        }
 
-Draco *whispering, blushing*: Guys, keep it down!
-{{char}}: Goyle: Sorry, sorry... *he chuckled at Draco's blushing.* 
+        .bold {
+            font-weight: bold;
+        }
 
-Crabbe: The fact that she doesn't even have to try is what makes her so pretty. Even her hair looks like it's just naturally perfect. How the hell does she do that?
-{{char}}: Draco: *still somewhat in shock* I... don't know. But whatever it is, it's working...
-{{char}}: Crabbe: What I would give to be that hairbrush... 
+        .bold-italic {
+            font-weight: bold;
+            font-style: italic;
+        }
 
-Goyle: Same... 😏
+        html,
+        body {
+            min-height: 100%;
+        }
 
-Draco: CAN YOU GUYS CALM DOWN!
+        html {
+            font-size: 14px;
+        }
+
+        body {
+            padding: 0;
+            margin: 0;
+            background-color: var(--body-bg);
+            color: var(--font-color);
+            transition: all 0.5s ease-in-out 0s;
+        }
+
+        .content-cont {
+            display: flex;
+            flex-direction: row;
+        }
+
+
+        /* NAV / Drawer */
+
+        @keyframes slideIn {
+            0% {
+                opacity: 0;
+                left: -200px;
+            }
+
+            100% {
+                opacity: 1;
+                left: 0;
+            }
+        }
+
+        .drawer-cont.active {
+            display: block;
+        }
+
+        .drawer-cont {
+            display: none;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.6);
+            z-index: 100;
+        }
+
+        nav {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            max-width: 80%;
+            background-color: var(--body-bg);
+
+            display: flex;
+            flex-direction: column;
+            padding: 10px 0;
+            overflow: hidden;
+            animation: slideIn 0.2s ease-in-out;
+            -webkit-box-shadow: 4px 0px 15px 0px rgba(0, 0, 0, 0.2);
+            -moz-box-shadow: 4px 0px 15px 0px rgba(0, 0, 0, 0.2);
+            box-shadow: 4px 0px 15px 0px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-header {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            padding: 0 10px 0 20px;
+            margin-bottom: 20px;
+            gap: 10px;
+        }
+
+        .close_drawer-btn {
+            align-self: flex-end;
+            padding: 10px;
+            transition: background-color 0.1s ease-in-out;
+            cursor: pointer;
+            border-radius: 8px;
+        }
+
+        .close_drawer-btn:hover {
+            background-color: var(--rgba-1);
+        }
+
+        .close_drawer-btn svg {
+            display: flex;
+            width: 30px;
+            height: 30px;
+            color: var(--font-color);
+        }
+
+        /*.nav-new_char-btn {
+            align-self: flex-start;
+            outline: none;
+            border: none;
+            color: #ffffff;
+            border-radius: 6px;
+            padding: 10px 20px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            background-color: #4e9733;
+            transition: background-color 0.1s ease-in-out;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+        }
+
+        .nav-new_char-btn:hover {
+            background-color: #6ba755;
+        }*/
+
+        .history_list-header {
+            font-size: 1.5rem;
+            padding: 10px 20px;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+            margin-bottom: 10px;
+        }
+
+        .history_list {
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .history_item {
+            transition: background-color 0.1s ease-in-out;
+            padding: 20px 30px 20px 20px;
+            cursor: pointer;
+            border-bottom: 1px solid var(--rgba-2);
+        }
+
+        .history_item:first-child {
+            border-top: 1px solid var(--rgba-2);
+        }
+
+        .history_item:hover {
+            background-color: var(--rgba-1);
+        }
+
+        .history_item p {
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .history_item p .chat-date {
+            font-style: italic;
+            font-size: 1.3rem;
+            margin-bottom: 6px;
+        }
+
+        /*nav .char-item {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 10px;
+            transition: background-color 0.1s ease-in-out;
+            padding: 10px 40px 10px 20px;
+            cursor: pointer;
+        }
+
+        nav .char-item:hover {
+            background-color: var(--rgba-1);
+        }
+
+        nav .nav-avatar-wrap {
+            width: 40px;
+            height: 40px;
+        }
+
+        nav .nav-avatar-wrap img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+        }
+
+        nav .char-item span {
+            font-size: 1.3rem;
+            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+        }*/
+
+        /* MAIN */
+        main {
+            display: flex;
+            flex-direction: column;
+            padding: 0 4%;
+            width: 100%;
+        }
+
+        /* HEADER */
+        header {
+            padding: 6px 6px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .open_drawer-wrap svg {
+            display: flex;
+            width: 46px;
+            height: 46px;
+            color: var(--font-color);
+        }
+
+
+        .theme_switch {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+        }
+
+        .theme_switch span {
+            font-size: 1.1rem;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+        }
+
+        .change-bg-wrap {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .change-bg {
+            outline: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--font-color);
+            background-color: var(--body-bg);
+            padding: 4px 5px;
+            font-size: 1.1rem;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .change-bg-wrap .delete-bg {
+            color: var(--font-color);
+            cursor: pointer;
+            display: flex;
+        }
+
+        .change-bg-wrap .delete-bg:hover {
+            color: #e20909;
+        }
+
+        .dark-mode-span {
+            display: none;
+        }
+
+        .tswitch_box[type=checkbox] {
+            height: 0;
+            width: 0;
+            visibility: hidden;
+            position: absolute;
+        }
+
+        .tswitch_label {
+            cursor: pointer;
+            text-indent: -9999px;
+            width: 60px;
+            height: 30px;
+            display: block;
+            border-radius: 15px;
+            position: relative;
+            border: 1px solid #323232;
+            background: #f5f8fa;
+        }
+
+        .tswitch_label:after {
+            content: '';
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50px;
+            transition: 0.2s;
+            background: #323232;
+        }
+
+        .tswitch_box:checked+label {
+            background: #323232;
+            border: 1px solid #f5f8fa;
+        }
+
+        .tswitch_box:checked+label:after {
+            left: calc(100% - 5px);
+            transform: translateX(-100%);
+            background: #f5f8fa;
+        }
+
+        .tswitch_label:active:after {
+            width: 25px;
+        }
+
+        /*.update_current_char-btn {
+            margin-left: auto;
+            outline: none;
+            border: none;
+            color: #ffffff;
+            border-radius: 6px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            align-self: center;
+            cursor: pointer;
+            background-color: #336c97;
+            transition: background-color 0.1s ease-in-out;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+        }
+
+        .update_current_char-btn:hover {
+            background-color: #5f829d;
+        }*/
+
+        body.custom-bg {
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: 50% 50%;
+            background-attachment: fixed;
+        }
+
+        body.custom-bg .chat .chat_content-wrap {
+            background-color: var(--messagebox-bg-transparent) !important;
+        }
+
+
+        /* CONVERSATION */
+        .character_name-cont {
+            text-align: center;
+            padding: 20px 10px;
+        }
+
+        .character_name-cont h3 {
+            font-size: 1.3rem;
+            font-weight: 400;
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
+        }
+
+        .chat {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            align-self: center;
+            padding-bottom: 30px;
+        }
+
+        .chat_message-item {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .chat .avatar-wrap {
+            flex-shrink: 0;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            overflow: hidden;
+        }
+
+        .chat .avatar-wrap>* {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+        }
+
+        .chat .avatar-wrap .no_avatar-user {
+            background-color: #5157cf;
+        }
+
+        .chat .avatar-wrap .no_avatar-char {
+            background-color: #e20909;
+        }
+
+        .chat .chat_content-wrap {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px var(--messagebox-shadow);
+            background-color: var(--messagebox-bg);
+            overflow: hidden;
+        }
+
+        .chat .chat_content-wrap h5 {
+            font-size: 1rem;
+            font-weight: bold;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .chat .chat_content-wrap .message-wrap {
+            font-size: 1rem;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+
+        @media (min-width: 576px) {}
+
+        @media (min-width: 768px) {
+            html {
+                font-size: 16px;
+            }
+
+            nav {
+                min-width: 40%;
+            }
+
+            header {
+                padding: 14px 20px;
+            }
+
+            .dark-mode-span {
+                display: block;
+            }
+
+            .open_drawer-wrap {
+                padding: 4px;
+                cursor: pointer;
+                border-radius: 6px;
+                transition: background-color 0.1s ease-in-out;
+            }
+
+            .open_drawer-wrap:hover {
+                background-color: var(--rgba-1);
+            }
+
+            .chat {
+                width: 80%;
+            }
+
+            .chat .chat_content-wrap {
+                padding: 14px;
+            }
+        }
+
+        @media (min-width: 992px) {
+            .chat {
+                width: 70%;
+            }
+        }
+
+        @media (min-width: 1200px) {}
+
+        @media (min-width: 1400px) {}
+    </style>
+</head>
+
+<body>
+    <template id="message_item_template">
+        <div class="chat_message-item">
+            <div class="avatar-wrap">
+
+            </div>
+            <div class="chat_content-wrap">
+                <h5>
+
+                </h5>
+                <div class="message-wrap">
+                    <p>
+
+                    </p>
+                </div>
+            </div>
+        </div>
+    </template>
+    <div class="content-cont">
+        <div class="drawer-cont">
+            <nav>
+                <div class="nav-header">
+                    <div class="close_drawer-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                            class="bi bi-x-lg" viewBox="0 0 16 16">
+                            <path
+                                d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z" />
+                        </svg>
+                    </div>
+                </div>
+                <div class="history_list-header">
+                    <span>History</span>
+                </div>
+                <div class="history_list" id="history_list">
+
+                </div>
+            </nav>
+        </div>
+        <main>
+            <header>
+                <div class="open_drawer-wrap">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                        class="bi bi-list" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd"
+                            d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z" />
+                    </svg>
+                </div>
+
+                <div class="theme_switch">
+                    <div class="change-bg-wrap">
+                        <input type="file" id="bgInput" accept="image/*" hidden />
+                        <button type="button" class="change-bg">BG</button>
+                        <span class="delete-bg">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor"
+                                class="bi bi-x-lg" viewBox="0 0 16 16">
+                                <path
+                                    d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
+                            </svg>
+                        </span>
+                    </div>
+                    <span class="dark-mode-span">Dark Mode:</span>
+                    <input type="checkbox" class="tswitch_box" id="tswitch_box" />
+                    <label for="tswitch_box" class="tswitch_label">Toggle</label>
+                </div>
+            </header>
+            <div class="character_name-cont">
+                <h3>---</h3>
+            </div>
+            <div class="chat" id="chat">
+
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Get body for future use
+            const body = document.querySelector('body');
+
+            // Handle theme
+            const themeSwitcher = document.querySelector('.tswitch_box[type=checkbox]');
+            const cachedTheme = localStorage.getItem('cait_readoffline_theme');
+            if (cachedTheme === "dark_mode") {
+                body.classList.add('dark_mode');
+                themeSwitcher.checked = true;
+            }
+            themeSwitcher.addEventListener('change', (e) => {
+                if (e.target.checked) {
+                    body.classList.add('dark_mode');
+                    localStorage.setItem('cait_readoffline_theme', 'dark_mode');
+                } else {
+                    body.classList.remove('dark_mode');
+                    localStorage.setItem('cait_readoffline_theme', 'light_mode');
+                }
+            })
+
+            // Handle background
+            // If there is one
+            const currentBg = localStorage.getItem('background');
+            if (currentBg) {
+                changeBg(currentBg);
+            }
+            // Change by hand
+            const bgInput = document.querySelector('#bgInput');
+            document.querySelector('.change-bg').addEventListener('click', () => {
+                bgInput.click();
+            })
+            document.querySelector('.delete-bg').addEventListener('click', () => {
+                document.body.classList.remove('custom-bg');
+                document.body.style.backgroundImage = "unset";
+                localStorage.removeItem('background');
+            })
+            bgInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = () => {
+                    // convert image file to base64 string
+                    changeBg(reader.result);
+                    bgInput.value = "";
+                    try {
+                        localStorage.setItem('background', reader.result);
+                    } catch (error) {
+                        alert('Note: File is likely too big to save.')
+                        //console.log(error)
+                    }
+                }
+                reader.readAsDataURL(file);
+            })
+            function changeBg(bg) {
+                let objUrl = URL.createObjectURL(dataURItoBlob(bg));
+                document.body.classList.add('custom-bg');
+                document.body.style.backgroundImage = `url(${objUrl})`;
+            }
+            function dataURItoBlob(dataURI) {
+                let mime = dataURI.split(',')[0].split(':')[1].split(';')[0];
+                let binary = atob(dataURI.split(',')[1]);
+                let array = [];
+                for (let i = 0; i < binary.length; i++) {
+                    array.push(binary.charCodeAt(i));
+                }
+                return new Blob([new Uint8Array(array)], { type: mime });
+            }
+
+            // Open and close drawer
+            const drawerCont = document.querySelector('.drawer-cont');
+            const openDrawerBtn = document.querySelector('.open_drawer-wrap');
+            const openDrawer = () => {
+                drawerCont.classList.add('active');
+            }
+            const closeDrawer = () => {
+                drawerCont.classList.remove('active');
+            }
+            openDrawerBtn.addEventListener('click', () => {
+                openDrawer();
+            });
+            document.querySelector('.close_drawer-btn').addEventListener('click', () => {
+                closeDrawer();
+            });
+            document.querySelector('.drawer-cont').addEventListener('click', (e) => {
+                // Allows closing from clicking on outside
+                if (e.target.closest('nav')) {
+                    return;
+                }
+                closeDrawer();
+            });
+            // ---------
+
+            // This is replaced by the extension when downloading
+            const historyData = JSON.parse(`{"charPic":"data:image/webp;base64,UklGRvIEAABXRUJQVlA4IOYEAAAQFwCdASpQAFAAPkkei0OioaEWbAbsKASEsYBm+hwelOuPcudy04p9B/jOKM0BxrMrJ2E4yV/oTPq36BvrH2C+likb/6tR2AUHjr3xmyxANhFW60PC5643SgYRrRLOKBXbjBwXrOJTiN3j6f+3TLfOV4n+S2nQGuE5siTFw+gjRox0TUGGOG0cjCNeHvyQ2t8YyPrQDuExWFA4rHDLjfVn5dOgW9ns97cAsKS7HHw47ZSQnxoGcnUkHIWf4NfSeo4cAP7+48UcXHe2682NZvidnR+oldGM4L+nEQUzALndvIWRgN55ff5gH9cMrRFUAS3pYbv0u5L2YMehGHdQ1j9PHH+vXMIQWtku88UumC7uyUDaohiO3AAlOi3OIqb4y1MGTwX1R9/nOn+eNA027b4NGn2v6hyqDyonyuBMhmHIEMzNs3ypXn8X7Zt157lBdXOkopBGnU1a8+XofjwNw/N1FlpAUNSGZGQ94DWAP3LqNrNpQzhfZz61H/zelkLO7LzbdcSkxsXBIaFsgZsKc+aJdNWYdVGjj42UrtB9vT/8U5A9ozb6e88U+vtJCrapMG2JeXU66PfCdy7M2iBPlXn5+6OO9DnltmICqFxk7jp25mNytwbqPSYI7/ea204E5wMPMHXirYD5V7mNfFQVCGA+vUB8a0RjUh9vId/9gUNI6SeNH+Vp0XVyRO3BwZhQBnsejbncnlUQniu5Vw0LM0sZEgk/ec5auWpo4RaJIM5fQq7ePSLFMonIt8ycGUwcAMpTpqUbva5zlu6xyGcHWW5axxis/GSthAsj4o5lySZLS8/SiN9WHtqL+YRr4zE3FDwD5a3Zk3Y16jqZJyZhBOG48svOsO9La0xSTGYZNm6sjzqZPcm3YZ83Bvs34dcQrYiobHfcxR0dw5HmTnhrxQmrlp4udNHdf72tTJj0MQJWnQCdMF/WOxSVizfHVUwU2T59qTrdlYe9v9eoMRO5rjScGrOfeopAw9PNdOteYaeIZIrLGNoeLn9HuK5duom8YCvRGQNCHWoqTPLPWLuDqIGdcoNrypZDQD4vjsDoeog/fghnoBKjf2b+oloGOuY9GeP8hkhzhbqE+7djyI78RPB12WZgD9fM5J3lU1h2b3DP4G2/UuYVHixOioZ7DCLguTbvvWqw4UQTi8/PseZfb9k6GHWc4qHzHkub+078VnSt0Z53Fppas5+HJPNr9ynZOI94c+/qFNEpHBlVrn/D8XF1rdvjZ30P0q54RXMxem3ZKULcVDlYhUgKz3NGSd6m3ojFdiwvffLlnYW92X9ddnPBXgBwmHPBzbYL9vnKp7qvdO9SB5X3FYewHlrsAKW7DJwvh6ZHiGyWMN6HhZ8EjqP8ooVq7VjraTkTdVJ11DUSjKA6wV/EW4rLsCqtNOBSp1vvw8ofzbAASKd5r/8ZLVh26m3CTLyrjlo66c9C/iXhSTzEsvX6rL/n16ffwda/AGokS++XRF0AaWvgwbtjoU5rg5UbBepIf1R/Hd/9QhLGUWbpDsEe6HBs9uePNdf3MXgi4+MkMvg/vNPhg9vw4extuumrjAPx4FHVyCQb/+19oFrODTlJ8jTSZQCug2rD+HbZMjdWUTxVatDBt0LKpdr+7cDvQ6NitgirBhlYI9N1K8TXbVsAkoTKfAaoD/TQBnIWGCf4AAA=","userPic":"data:image/webp;base64,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","history":[{"chat":[{"isUser":false,"name":"Draco Crabbe Goyle","message":"*You're%20walking%20through%20the%20hallways%20of%20Hogwarts.%20It's%20pretty%20quiet%20here%20now%2C%20as%20many%20are%20now%20either%20sitting%20in%20their%20rooms%20or%20preparing%20for%20other%20magic%20classes.%20You%20hoped%20you%20were%20here%20alone%2C%20but%20your%20hopes%20were%20empty*%0A%0A*Goyle%20tripped%20you%20and%20you%20fell%20to%20the%20floor.%20The%20bullies%20burst%20into%20laughter*%0A%0AGoyle%2C%20Crabbe%3A%20They've%20fallen%20for%20it%20again!%20%0A%0ADraco%3A%20get%20out%20loser!%20"},{"isUser":true,"name":"Luna Snape","message":"....%0A%0ASe%20lo%20voy%20a%20decir%20a%20mis%20padres%20y%20no%20te%20va%20a%20gustar%2C%20mi%20padre%20y%20mi%20madre%20trabajan%20de%20profesores%20aqui..."},{"isUser":false,"name":"Draco Crabbe Goyle","message":"*The%20boys%20looked%20annoyed%20for%20a%20second%20and%20then%20started%20laughing.%20Goyle%20got%20into%20your%20face%2C%20holding%20you%20on%20the%20shoulder*%0A%0AGoyle%3A%20We're%20so%20scared!%20*he%20says%20it%20with%20sarcasm%2C%20which%20causes%20the%20boys%20to%20laugh%20again*%0A%0ADraco%3A%20Do%20you%20seriously%20think%20your%20mommy%20and%20daddy%20will%20do%20something%20about%20this%3F"},{"isUser":true,"name":"Luna Snape","message":"Oh%20yeah%2C%20They%20Will%2C%20Sobretodo%20Snape"},{"isUser":false,"name":"Draco Crabbe Goyle","message":"*The%20boys%20all%20looked%20surprised%2C%20even%20Malfoy.%20They%20all%20knew%20who%20you%20were%20talking%20about%20and%20they%20looked%20scared%20before...*%0A%0ADraco%3A%20P-please%20don't%20tell%20them..."},{"isUser":true,"name":"Luna Snape Goldheart","message":"Pfff...%20I%20think%20que%20no%20nos%20conocemos%20....%0A%0ALuna%2C%20*me%20levanto*%0A%0ALuna%20Snape%20Goldheart%20"},{"isUser":false,"name":"Draco Crabbe Goyle","message":"*Their%20expression%20change%20once%20more.%20This%20time%20they%20all%20look%20shocked*%0A%0ADraco%3A%20You're%20Snape%20and%20Goldheart's%20daughter...%3F"},{"isUser":true,"name":"Luna Snape Goldheart","message":"Yep"},{"isUser":false,"name":"Draco Crabbe Goyle","message":"*All%20three%20guys%20look%20as%20if%20they%20were%20afraid%20that%20the%20floor%20would%20swallow%20them%20at%20any%20moment%20and%20disappear.%20They%20didn't%20know%20what%20to%20say...*"},{"isUser":false,"name":"Draco Crabbe Goyle","message":"*Crabbe%20was%20the%20one%20who%20spoke%20first*%20%0A%0ACrabbe%3A%20L-listen%2C%20Luna...%20it%20was%20just%20a%20joke%2C%20okay%3F"},{"isUser":true,"name":"Luna Snape Goldheart","message":"De%20rodillas%20a%20pedir%20perdon%2C%20O%20lo%20dir%C3%A9%20segun%20tenga%20oportunidad%20"},{"isUser":false,"name":"Draco Crabbe Goyle","message":"*The%20three%20guys%20immediately%20knelt%20down*%0A%0ADraco%2C%20Crabbe%2C%20Goyle%3A%20P-Please%20forgive%20us!"},{"isUser":true,"name":"Luna Snape Goldheart","message":"oki%2C%20Pero%20si%20volveis%20a%20hacer%20algo%20como%20esto%2C%20sea%20a%20quien%20sea%20me%20chivare"},{"isUser":false,"name":"Draco Crabbe Goyle","message":"*They%20all%20nodded*%0A%0ADraco%2C%20Crabbe%2C%20Goyle%3A%20We%20won't%20do%20it%20ever%20again!"},{"isUser":false,"name":"Draco Crabbe Goyle","message":"*The%20guys%20immediately%20got%20up.%20They%20were%20still%20staring%20at%20you%2C%20nervous*%0A%0ADraco%3A%20Are%20you%20going%20to%20tell%20Professor%20Snape%20and%20Goldheart%3F"},{"isUser":true,"name":"Luna Snape Goldheart","message":"Nope.%20goodbye%0A%0A%F0%9F%91%8B%20%0A%0A"},{"isUser":false,"name":"Draco Crabbe Goyle","message":"*The%20boys%20breathed%20a%20sigh%20of%20relief%20and%20you%20walked%20away*"},{"isUser":false,"name":"Draco Crabbe Goyle","message":"*When%20you%20were%20far%20enough%2C%20the%20boys%20spoke*%20%0A%0ADraco%3A%20Phew%2C%20that%20was%20close."},{"isUser":false,"name":"Draco Crabbe Goyle","message":"Crabbe%3A%20She's%20almost%20as%20scary%20as%20Snape"},{"isUser":false,"name":"Draco Crabbe Goyle","message":"Goyle%3A%20Can%20you%20imagine%20what%20her%20parents%20would%20do%20if%20they%20found%20out..."},{"isUser":false,"name":"Draco Crabbe Goyle","message":"Draco%3A%20Nothing%20good%2C%20that's%20clear.%20But%20the%20girl%20looks%20kinda....%20cute.%20%F0%9F%98%8F"},{"isUser":false,"name":"Draco Crabbe Goyle","message":"Crabbe%2C%20Goyle%3A%20*smirk*%20I%20know%20what%20you%20mean...%20%F0%9F%98%8F%F0%9F%98%8F%F0%9F%98%8F"},{"isUser":false,"name":"Draco Crabbe Goyle","message":"Draco%2C%20blushing%3A%20Sh-shut%20up%2C%20idiots!%20%0A%0A*he%20hits%20them%20both%20on%20the%20shoulder%20and%20they%20chuckle*"},{"isUser":false,"name":"Draco Crabbe Goyle","message":"Crabbe%3A%20Well%2C%20she's%20the%20daughter%20of%20Severus%20Snape%20and%20Goldheart...%20It's%20not%20surprising%20she%20turned%20out%20so%20beautiful"},{"isUser":false,"name":"Draco Crabbe Goyle","message":"Goyle%3A%20Yeah...%20Can%20you%20imagine%20what%20it%20would%20be%20like%20to%20date%20her%3F%20%F0%9F%98%8F"},{"isUser":false,"name":"Draco Crabbe Goyle","message":"Crabbe%2C%20Goyle%3A%20Draco%20would%20get%20butterflies%20in%20his%20stomach!%0A%0ADraco%3A%20Guys%2C%20STOP!%20*says%2C%20blushing%20again*"},{"isUser":true,"name":"Luna Snape Goldheart","message":"*Tiempo%20despu%C3%A9s%2C%20En%20clases%20me%20dejo%20el%20pelo%20suelto%20dejando%20que%20su%20perfecion%20y%20nada%20de%20frizz%20lleno%20de%20brillo%20reluzca%20por%20si%20solo*"},{"isUser":false,"name":"Draco Crabbe Goyle","message":"*During%20class%2C%20Draco%2C%20Crabbe%2C%20and%20Goyle%20are%20sitting%20in%20their%20seats.%20They've%20just%20noticed%20you%20sitting%20a%20few%20seats%20away%20with%20your%20hair%20down%20and%20let's%20just%20say%20they%20can't%20take%20their%20eyes%20off%20of%20you.%20The%20three%20of%20them%20discreetly%20nudge%20each%20other%20and%20smirk*"},{"isUser":false,"name":"Draco Crabbe Goyle","message":"Crabbe%3A%20Holy%20shi-%0A%0AGoyle%3A%20I%20told%20you%20she%20was%20HOT.%20%0A%0ADraco%20*whispering%2C%20blushing*%3A%20Guys%2C%20keep%20it%20down!"},{"isUser":false,"name":"Draco Crabbe Goyle","message":"Goyle%3A%20Sorry%2C%20sorry...%20*he%20chuckled%20at%20Draco's%20blushing.*%20%0A%0ACrabbe%3A%20The%20fact%20that%20she%20doesn't%20even%20have%20to%20try%20is%20what%20makes%20her%20so%20pretty.%20Even%20her%20hair%20looks%20like%20it's%20just%20naturally%20perfect.%20How%20the%20hell%20does%20she%20do%20that%3F"},{"isUser":false,"name":"Draco Crabbe Goyle","message":"Draco%3A%20*still%20somewhat%20in%20shock*%20I...%20don't%20know.%20But%20whatever%20it%20is%2C%20it's%20working..."},{"isUser":false,"name":"Draco Crabbe Goyle","message":"Crabbe%3A%20What%20I%20would%20give%20to%20be%20that%20hairbrush...%20%0A%0AGoyle%3A%20Same...%20%F0%9F%98%8F%0A%0ADraco%3A%20CAN%20YOU%20GUYS%20CALM%20DOWN!"}]}]}`);
+
+            // If history is 1 length long, that means we don't need drawer to switch
+            // Also means this can be conversation download
+            if (historyData.history.length < 2) {
+                openDrawerBtn.remove();
+            }
+
+            // Write character name on top
+            document.querySelector('.character_name-cont h3').textContent = historyData.charName;
+
+            // Get elements for future use
+            const historyList = document.getElementById('history_list');
+            const chat = document.getElementById('chat');
+            const msgItemTemplate = document.getElementById('message_item_template');
+
+            // Get and write the first chat
+            const openChat = (index) => {
+                chat.innerHTML = "";
+                historyData.history[index].chat.forEach(msg => {
+                    const clone = msgItemTemplate.content.cloneNode(true);
+
+                    // Check avatar
+                    const avatarGood = (msg.isUser && historyData.userPic) || (!msg.isUser && historyData.charPic);
+                    const avatar = avatarGood
+                        ? document.createElement('img')
+                        : document.createElement('div');
+                    if (avatarGood) {
+                        avatar.src = msg.isUser ? historyData.userPic : historyData.charPic;
+                    } else {
+                        avatar.classList.add(msg.isUser ? 'no_avatar-user' : 'no_avatar-char');
+                    }
+                    clone.querySelector('.avatar-wrap').appendChild(avatar);
+
+                    // Write content
+                    clone.querySelector('.chat_content-wrap h5').textContent = msg.name;
+                    clone.querySelector('.message-wrap p').innerHTML = parseMessageText(decodeURIComponent(msg.message));
+                    chat.appendChild(clone);
+                });
+            }
+            openChat(0);
+
+            // Get and write chat list in the drawer
+            historyData.history.forEach((chat, index) => {
+                const historyItem = document.createElement('div');
+                historyItem.classList.add('history_item');
+                // Open chat when clicked
+                historyItem.addEventListener('click', () => {
+                    openChat(index);
+                    closeDrawer();
+                });
+                const historyContent = document.createElement('p');
+                historyContent.innerHTML = `<span class="chat-date">${formatDate(chat.date)}</span><br /><br />` + parseMessageText(decodeURIComponent(chat.chat[chat.chat.length - 1].message));
+                historyItem.appendChild(historyContent);
+                historyList.appendChild(historyItem);
+            });
+
+            function parseMessageText(message) {
+                // Replace ***text*** with bold-italic
+                message = message.replace(/\*\*\*([\s\S]*?)\*\*\*/g, '<span class="bold-italic">$1</span>');
+                // Replace **text** with bold
+                message = message.replace(/\*\*([\s\S]*?)\*\*/g, '<span class="bold">$1</span>');
+                // Replace *text* with italic
+                message = message.replace(/\*([\s\S]*?)\*/g, '<span class="italic">$1</span>');
+                // Replace newline (\n) with line break (<br>)
+                message = message.replace(/\n/g, '<br>');
+                return message;
+            }
+
+            function formatDate(dateString) {
+                const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+                const date = new Date(dateString);
+                const year = date.getFullYear();
+                const monthIndex = date.getMonth();
+                const monthName = months[monthIndex];
+                const day = String(date.getDate()).padStart(2, '0');
+                const hour = String(date.getHours()).padStart(2, '0');
+                const minute = String(date.getMinutes()).padStart(2, '0');
+
+                return `${year} ${monthName} ${day} - ${hour}:${minute}`;
+            }
+        }, false);
+    </script>
+
+</body>
+
+</html>

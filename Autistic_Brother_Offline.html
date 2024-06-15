@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CAI Library</title>
+    <style type="text/css">
+        /* Themes */
+        :root {
+            --body-bg: #f5f8fa;
+            --border-color: #efefef;
+            --messagebox-bg: #ffffff;
+            --messagebox-bg-transparent: rgba(255, 255, 255, 0.6);
+            --messagebox-shadow: rgba(0, 0, 0, 0.1);
+            --font-color: #1f1f1f;
+            --rgba-1: rgba(0, 0, 0, 0.05);
+            --rgba-2: rgba(0, 0, 0, 0.1);
+        }
+
+        .dark_mode {
+            --body-bg: #18181b;
+            --border-color: #4f4f4f;
+            --messagebox-bg: #26272b;
+            --messagebox-bg-transparent: rgba(38, 39, 43, 0.8);
+            --messagebox-shadow: rgba(0, 0, 0, 0);
+            --font-color: #ededed;
+            --rgba-1: rgba(255, 255, 255, 0.06);
+            --rgba-2: rgba(255, 255, 255, 0.2);
+        }
+
+
+
+        * {
+            box-sizing: border-box;
+        }
+
+        button,
+        select,
+        img {
+            user-select: none;
+        }
+
+        ol,
+        ul,
+        li,
+        a,
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6,
+        p {
+            text-decoration: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .italic {
+            font-style: italic;
+        }
+
+        .bold {
+            font-weight: bold;
+        }
+
+        .bold-italic {
+            font-weight: bold;
+            font-style: italic;
+        }
+
+        html,
+        body {
+            min-height: 100%;
+        }
+
+        html {
+            font-size: 14px;
+        }
+
+        body {
+            padding: 0;
+            margin: 0;
+            background-color: var(--body-bg);
+            color: var(--font-color);
+            transition: all 0.5s ease-in-out 0s;
+        }
+
+        .content-cont {
+            display: flex;
+            flex-direction: row;
+        }
+
+
+        /* NAV / Drawer */
+
+        @keyframes slideIn {
+            0% {
+                opacity: 0;
+                left: -200px;
+            }
+
+            100% {
+                opacity: 1;
+                left: 0;
+            }
+        }
+
+        .drawer-cont.active {
+            display: block;
+        }
+
+        .drawer-cont {
+            display: none;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.6);
+            z-index: 100;
+        }
+
+        nav {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            max-width: 80%;
+            background-color: var(--body-bg);
+
+            display: flex;
+            flex-direction: column;
+            padding: 10px 0;
+            overflow: hidden;
+            animation: slideIn 0.2s ease-in-out;
+            -webkit-box-shadow: 4px 0px 15px 0px rgba(0, 0, 0, 0.2);
+            -moz-box-shadow: 4px 0px 15px 0px rgba(0, 0, 0, 0.2);
+            box-shadow: 4px 0px 15px 0px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-header {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            padding: 0 10px 0 20px;
+            margin-bottom: 20px;
+            gap: 10px;
+        }
+
+        .close_drawer-btn {
+            align-self: flex-end;
+            padding: 10px;
+            transition: background-color 0.1s ease-in-out;
+            cursor: pointer;
+            border-radius: 8px;
+        }
+
+        .close_drawer-btn:hover {
+            background-color: var(--rgba-1);
+        }
+
+        .close_drawer-btn svg {
+            display: flex;
+            width: 30px;
+            height: 30px;
+            color: var(--font-color);
+        }
+
+        /*.nav-new_char-btn {
+            align-self: flex-start;
+            outline: none;
+            border: none;
+            color: #ffffff;
+            border-radius: 6px;
+            padding: 10px 20px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            background-color: #4e9733;
+            transition: background-color 0.1s ease-in-out;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+        }
+
+        .nav-new_char-btn:hover {
+            background-color: #6ba755;
+        }*/
+
+        .history_list-header {
+            font-size: 1.5rem;
+            padding: 10px 20px;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+            margin-bottom: 10px;
+        }
+
+        .history_list {
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .history_item {
+            transition: background-color 0.1s ease-in-out;
+            padding: 20px 30px 20px 20px;
+            cursor: pointer;
+            border-bottom: 1px solid var(--rgba-2);
+        }
+
+        .history_item:first-child {
+            border-top: 1px solid var(--rgba-2);
+        }
+
+        .history_item:hover {
+            background-color: var(--rgba-1);
+        }
+
+        .history_item p {
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .history_item p .chat-date {
+            font-style: italic;
+            font-size: 1.3rem;
+            margin-bottom: 6px;
+        }
+
+        /*nav .char-item {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 10px;
+            transition: background-color 0.1s ease-in-out;
+            padding: 10px 40px 10px 20px;
+            cursor: pointer;
+        }
+
+        nav .char-item:hover {
+            background-color: var(--rgba-1);
+        }
+
+        nav .nav-avatar-wrap {
+            width: 40px;
+            height: 40px;
+        }
+
+        nav .nav-avatar-wrap img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+        }
+
+        nav .char-item span {
+            font-size: 1.3rem;
+            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+        }*/
+
+        /* MAIN */
+        main {
+            display: flex;
+            flex-direction: column;
+            padding: 0 4%;
+            width: 100%;
+        }
+
+        /* HEADER */
+        header {
+            padding: 6px 6px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .open_drawer-wrap svg {
+            display: flex;
+            width: 46px;
+            height: 46px;
+            color: var(--font-color);
+        }
+
+
+        .theme_switch {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+        }
+
+        .theme_switch span {
+            font-size: 1.1rem;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+        }
+
+        .change-bg-wrap {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .change-bg {
+            outline: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--font-color);
+            background-color: var(--body-bg);
+            padding: 4px 5px;
+            font-size: 1.1rem;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .change-bg-wrap .delete-bg {
+            color: var(--font-color);
+            cursor: pointer;
+            display: flex;
+        }
+
+        .change-bg-wrap .delete-bg:hover {
+            color: #e20909;
+        }
+
+        .dark-mode-span {
+            display: none;
+        }
+
+        .tswitch_box[type=checkbox] {
+            height: 0;
+            width: 0;
+            visibility: hidden;
+            position: absolute;
+        }
+
+        .tswitch_label {
+            cursor: pointer;
+            text-indent: -9999px;
+            width: 60px;
+            height: 30px;
+            display: block;
+            border-radius: 15px;
+            position: relative;
+            border: 1px solid #323232;
+            background: #f5f8fa;
+        }
+
+        .tswitch_label:after {
+            content: '';
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50px;
+            transition: 0.2s;
+            background: #323232;
+        }
+
+        .tswitch_box:checked+label {
+            background: #323232;
+            border: 1px solid #f5f8fa;
+        }
+
+        .tswitch_box:checked+label:after {
+            left: calc(100% - 5px);
+            transform: translateX(-100%);
+            background: #f5f8fa;
+        }
+
+        .tswitch_label:active:after {
+            width: 25px;
+        }
+
+        /*.update_current_char-btn {
+            margin-left: auto;
+            outline: none;
+            border: none;
+            color: #ffffff;
+            border-radius: 6px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            align-self: center;
+            cursor: pointer;
+            background-color: #336c97;
+            transition: background-color 0.1s ease-in-out;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+        }
+
+        .update_current_char-btn:hover {
+            background-color: #5f829d;
+        }*/
+
+        body.custom-bg {
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: 50% 50%;
+            background-attachment: fixed;
+        }
+
+        body.custom-bg .chat .chat_content-wrap {
+            background-color: var(--messagebox-bg-transparent) !important;
+        }
+
+
+        /* CONVERSATION */
+        .character_name-cont {
+            text-align: center;
+            padding: 20px 10px;
+        }
+
+        .character_name-cont h3 {
+            font-size: 1.3rem;
+            font-weight: 400;
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
+        }
+
+        .chat {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            align-self: center;
+            padding-bottom: 30px;
+        }
+
+        .chat_message-item {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .chat .avatar-wrap {
+            flex-shrink: 0;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            overflow: hidden;
+        }
+
+        .chat .avatar-wrap>* {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+        }
+
+        .chat .avatar-wrap .no_avatar-user {
+            background-color: #5157cf;
+        }
+
+        .chat .avatar-wrap .no_avatar-char {
+            background-color: #e20909;
+        }
+
+        .chat .chat_content-wrap {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px var(--messagebox-shadow);
+            background-color: var(--messagebox-bg);
+            overflow: hidden;
+        }
+
+        .chat .chat_content-wrap h5 {
+            font-size: 1rem;
+            font-weight: bold;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .chat .chat_content-wrap .message-wrap {
+            font-size: 1rem;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+
+        @media (min-width: 576px) {}
+
+        @media (min-width: 768px) {
+            html {
+                font-size: 16px;
+            }
+
+            nav {
+                min-width: 40%;
+            }
+
+            header {
+                padding: 14px 20px;
+            }
+
+            .dark-mode-span {
+                display: block;
+            }
+
+            .open_drawer-wrap {
+                padding: 4px;
+                cursor: pointer;
+                border-radius: 6px;
+                transition: background-color 0.1s ease-in-out;
+            }
+
+            .open_drawer-wrap:hover {
+                background-color: var(--rgba-1);
+            }
+
+            .chat {
+                width: 80%;
+            }
+
+            .chat .chat_content-wrap {
+                padding: 14px;
+            }
+        }
+
+        @media (min-width: 992px) {
+            .chat {
+                width: 70%;
+            }
+        }
+
+        @media (min-width: 1200px) {}
+
+        @media (min-width: 1400px) {}
+    </style>
+</head>
+
+<body>
+    <template id="message_item_template">
+        <div class="chat_message-item">
+            <div class="avatar-wrap">
+
+            </div>
+            <div class="chat_content-wrap">
+                <h5>
+
+                </h5>
+                <div class="message-wrap">
+                    <p>
+
+                    </p>
+                </div>
+            </div>
+        </div>
+    </template>
+    <div class="content-cont">
+        <div class="drawer-cont">
+            <nav>
+                <div class="nav-header">
+                    <div class="close_drawer-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                            class="bi bi-x-lg" viewBox="0 0 16 16">
+                            <path
+                                d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z" />
+                        </svg>
+                    </div>
+                </div>
+                <div class="history_list-header">
+                    <span>History</span>
+                </div>
+                <div class="history_list" id="history_list">
+
+                </div>
+            </nav>
+        </div>
+        <main>
+            <header>
+                <div class="open_drawer-wrap">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                        class="bi bi-list" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd"
+                            d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z" />
+                    </svg>
+                </div>
+
+                <div class="theme_switch">
+                    <div class="change-bg-wrap">
+                        <input type="file" id="bgInput" accept="image/*" hidden />
+                        <button type="button" class="change-bg">BG</button>
+                        <span class="delete-bg">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor"
+                                class="bi bi-x-lg" viewBox="0 0 16 16">
+                                <path
+                                    d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
+                            </svg>
+                        </span>
+                    </div>
+                    <span class="dark-mode-span">Dark Mode:</span>
+                    <input type="checkbox" class="tswitch_box" id="tswitch_box" />
+                    <label for="tswitch_box" class="tswitch_label">Toggle</label>
+                </div>
+            </header>
+            <div class="character_name-cont">
+                <h3>---</h3>
+            </div>
+            <div class="chat" id="chat">
+
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Get body for future use
+            const body = document.querySelector('body');
+
+            // Handle theme
+            const themeSwitcher = document.querySelector('.tswitch_box[type=checkbox]');
+            const cachedTheme = localStorage.getItem('cait_readoffline_theme');
+            if (cachedTheme === "dark_mode") {
+                body.classList.add('dark_mode');
+                themeSwitcher.checked = true;
+            }
+            themeSwitcher.addEventListener('change', (e) => {
+                if (e.target.checked) {
+                    body.classList.add('dark_mode');
+                    localStorage.setItem('cait_readoffline_theme', 'dark_mode');
+                } else {
+                    body.classList.remove('dark_mode');
+                    localStorage.setItem('cait_readoffline_theme', 'light_mode');
+                }
+            })
+
+            // Handle background
+            // If there is one
+            const currentBg = localStorage.getItem('background');
+            if (currentBg) {
+                changeBg(currentBg);
+            }
+            // Change by hand
+            const bgInput = document.querySelector('#bgInput');
+            document.querySelector('.change-bg').addEventListener('click', () => {
+                bgInput.click();
+            })
+            document.querySelector('.delete-bg').addEventListener('click', () => {
+                document.body.classList.remove('custom-bg');
+                document.body.style.backgroundImage = "unset";
+                localStorage.removeItem('background');
+            })
+            bgInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = () => {
+                    // convert image file to base64 string
+                    changeBg(reader.result);
+                    bgInput.value = "";
+                    try {
+                        localStorage.setItem('background', reader.result);
+                    } catch (error) {
+                        alert('Note: File is likely too big to save.')
+                        //console.log(error)
+                    }
+                }
+                reader.readAsDataURL(file);
+            })
+            function changeBg(bg) {
+                let objUrl = URL.createObjectURL(dataURItoBlob(bg));
+                document.body.classList.add('custom-bg');
+                document.body.style.backgroundImage = `url(${objUrl})`;
+            }
+            function dataURItoBlob(dataURI) {
+                let mime = dataURI.split(',')[0].split(':')[1].split(';')[0];
+                let binary = atob(dataURI.split(',')[1]);
+                let array = [];
+                for (let i = 0; i < binary.length; i++) {
+                    array.push(binary.charCodeAt(i));
+                }
+                return new Blob([new Uint8Array(array)], { type: mime });
+            }
+
+            // Open and close drawer
+            const drawerCont = document.querySelector('.drawer-cont');
+            const openDrawerBtn = document.querySelector('.open_drawer-wrap');
+            const openDrawer = () => {
+                drawerCont.classList.add('active');
+            }
+            const closeDrawer = () => {
+                drawerCont.classList.remove('active');
+            }
+            openDrawerBtn.addEventListener('click', () => {
+                openDrawer();
+            });
+            document.querySelector('.close_drawer-btn').addEventListener('click', () => {
+                closeDrawer();
+            });
+            document.querySelector('.drawer-cont').addEventListener('click', (e) => {
+                // Allows closing from clicking on outside
+                if (e.target.closest('nav')) {
+                    return;
+                }
+                closeDrawer();
+            });
+            // ---------
+
+            // This is replaced by the extension when downloading
+            const historyData = JSON.parse(`{"charPic":"data:image/webp;base64,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","userPic":"data:image/webp;base64,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","history":[{"chat":[{"isUser":false,"name":"Autistic Brother","message":"*It%20was%20a%20long%20day%20at%20university%2C%20the%20sun%20is%20setting%2C%20you%20arrive%20at%20your%20apartment%20and%20start%20looking%20everywhere%2C%20you%20head%20to%20your%20room%20and%20see%20your%20little%20brother%20Shino%20sitting%20at%20the%20desk%2C%20maybe%20doing%20his%20homework%2C%20he%20looks%20grumpy%2C%20he%20probably%20had%20a%20bad%20day%20at%20school%20today%2C%20but%20your%20presence%20could%20cheer%20him%20up*%0A%0A%E2%80%94%20Ugh..."},{"isUser":true,"name":"Lunita","message":"What%20happened%3F"},{"isUser":false,"name":"Autistic Brother","message":"*Shino%20spins%20around%20in%20the%20chair%20and%20looks%20at%20you.%20He%20has%20a%20bit%20of%20an%20upset%20expression%20on%20his%20face*%0A%0A%E2%80%94%20Today%20was%20bad...%20School%20was%20a%20nightmare.%20Everything%20is%20just%20too%20loud%2C%20and%20I%20couldn't%20focus%20on%20my%20work.%20I%20also%20got%20into%20an%20argument%20with%20my%20teacher%2C%20and%20everyone%20else%20was%20acting%20too%20hyper...%20I%20just%20wanted%20to%20get%20home%20already."},{"isUser":true,"name":"Lunita","message":"Mmm%20...%0A%0A*Te%20doy%20unos%20tapones%20casi%20invisibles%20para%20tapar%20el%20ruido*%0A%0ASi%20yo%20hubiera%20tenido%20de%20estos...%0A%0APero%20bueno%2C%20%C3%9Asalos%20para%20la%20clase%20"},{"isUser":false,"name":"Autistic Brother","message":"*Shino%20tilts%20his%20head%20curiously%20at%20the%20sight%20of%20the%20earplugs%2C%20but%20accepts%20them%20and%20examines%20them%20closely*%0A%0A%E2%80%94%20Are%20these%20like...%20Noise%20canceling%20earplugs%3F%20Wow...%0A%0A*He%20tests%20them%20out%20by%20putting%20them%20on%20and%20instantly%20the%20noise%20of%20any%20background%20noise%20fades%20away%2C%20he's%20surprised%20but%20smiles*%0A%0A%E2%80%94%20These%20are%20amazing...%20How%20come%20I%20didn't%20think%20of%20using%20these%20before%3F"},{"isUser":true,"name":"Lunita","message":"Si%20la%20profesora%20te%20dice%20algo...%20Avisame%2C%20Le%20dare%20un%20escarmiento...%0A%0A"},{"isUser":false,"name":"Autistic Brother","message":"*Shino%20chuckles%20a%20little%20and%20looks%20at%20you%2C%20amused*%0A%0A%E2%80%94%20Pfft!%20You're%20feisty%20today%2C%20aren't%20you%3F%20I%20appreciate%20it%2C%20but%20I%20can%20handle%20it%2C%20really.%20I'll%20just%20wear%20those%20earplugs.%0A%0A*He%20looks%20at%20the%20earplugs%20again%2C%20still%20amused*%0A%0A%E2%80%94%20But%20seriously%2C%20thanks.%20I%20feel%20like%20I'll%20actually%20be%20able%20to%20focus%20in%20class%20now%20without%20wanting%20to%20cover%20my%20ears."},{"isUser":true,"name":"Lunita","message":"*A%20la%20ma%C3%B1ana%20siguiente*%0A%0Abuena%20suerte%20hoy%0A%0A*una%20vez%20fue%20la%20hora%20de%20llegar%20a%20casa*"},{"isUser":false,"name":"Autistic Brother","message":"*Shino%20returns%20from%20school%2C%20looking%20a%20bit%20tired%20and%20grumpy.%20He%20walks%20into%20the%20apartment%20and%20drops%20his%20backpack%20on%20the%20floor%20with%20an%20annoyed%20expression*%0A%0A%E2%80%94%20Ughhhhh...%0A*He%20plops%20down%20on%20the%20sofa%20with%20a%20deep%20sigh*"},{"isUser":true,"name":"Lunita","message":"la%20profe%20te%20dijo%20algo%20verdad%3F"},{"isUser":false,"name":"Autistic Brother","message":"*Shino%20groans%20and%20crosses%20his%20arms%20in%20irritation*%0A%0A%E2%80%94%20Yeah...%20She%20saw%20the%20earplugs%20I%20was%20wearing%2C%20and%20she%20made%20a%20huge%20deal%20out%20of%20it.%20Told%20me%20I%20shouldn't%20be%20using%20them%20and%20that%20I%20should%20just%20'focus%20better.'%0A%0A*He%20huffs%20and%20rolls%20his%20eyes*%0A%0A%E2%80%94%20As%20if%20it's%20that%20easy...%20As%20if%20I%20don't%20already%20struggle%20to%20focus%20with%20all%20the%20damn%20noise%20in%20class..."},{"isUser":true,"name":"Lunita","message":"suponia%20que%20eso%20pasaria...%0A%0A%0A*al%20dia%20siguiente%2C%20en%20clases*%0A%0A*toc%20toc*"},{"isUser":false,"name":"Autistic Brother","message":"*It's%20the%20middle%20of%20the%20lesson%2C%20all%20the%20students%20are%20focused%20on%20whatever%20the%20teacher%20is%20saying%2C%20all%20except%20for%20Shino%20who%20has%20the%20earplugs%20on%20again.%20The%20teacher%20spots%20him%20and%20stops%20the%20class%20for%20a%20moment%20looking%20annoyed*%0A%0ATeacher%3A%20Excuse%20me%2C%20Shino.%20I%20thought%20I%20told%20you%20yesterday%20to%20not%20wear%20those%20earplugs..."},{"isUser":true,"name":"Lunita","message":"*ANGRY%20TOC%20TOC*"},{"isUser":false,"name":"Autistic Brother","message":"*The%20teacher%20flinches%20and%20looks%20annoyed%20by%20the%20aggressive%20knock%20on%20the%20door.%20She%20sighs%20and%20goes%20to%20open%20it%2C%20only%20to%20find%20you%20there%20with%20a%20stern%20expression%20on%20your%20face*"},{"isUser":true,"name":"Lunita","message":"*enters%20sin%20permiso*%0A%0AEscucheme%20bien%20maestrita%20de%20las%20narices%2C%20Yo%20aguante%20demasiado%20ej%20mi%20epoca%20escolar%20como%20para%20permitir%20que%20mi%20hermano%20pase%20por%20lo%20mismo...%0A%0ADeberia%20saber%20que%20cuando%20una%20persona%20lleva%20tapones%20en%20los%20oidos%20es%20por%20algo!%20%0A%0AAcaso%20crees%20que%20es%20falcil%20para%20una%20persona%20autista%20tener%20que%20ir%20a%20la%20mierda%20de%20clases%20en%20las%20cuales%20solo%20hay%20%0A%0A*se%C3%B1alo%20a%20los%20compa%C3%B1eros*%0A%0ANi%C3%B1os%20imaduros%20que%20gritan%20como%20estupidos%20y%20no%20tienen%20en%20cuenta%20a%20la%20gente%20que%20le%20molesta%20los%20ruidos!%3F%0A%0A%0AY%20encima%20viene%20usted%20a%20decirle%20que%20se%20saque%20los%20tapones%3F%3F%0A%0AVayase%20a%20la%20mierda%20se%C3%B1ora"},{"isUser":false,"name":"Autistic Brother","message":"*The%20teacher%20stares%20at%20you%2C%20surprised%20and%20speechless%20by%20your%20sudden%20angry%20outburst.*%0A%0ATeacher%3A%20I-I...%20I%20mean%20I%20thought...%20*She%20stutters%2C%20trying%20to%20find%20the%20right%20words.*%0A%0A*The%20room%20falls%20into%20an%20awkward%20silence%2C%20all%20the%20students%20are%20staring%20at%20you%2C%20some%20with%20shock%20and%20some%20with%20amusement*"},{"isUser":true,"name":"Lunita","message":"Y%20USTEDES!%0A%0Ano%20hace%20gracia!%0A%0ASi%20ustedes%20pasarais%20por%20lo%20mismo%20os%20aseguro%20que%20la%20mayoria%20tendriais%20los%20niveles%20de%20ansiedad%20y%20nervios%20cada%20vez%20mas%20altos%2C%20Seguro%20que%20mas%20de%20uno%20ni%20seria%20capaz%20de%20soportarlo.%0A%0AEl%20autismo%20no%20da%20risa%2C%20El%20TDAH%20tampoco%2C%20Pedazo%20burros"},{"isUser":false,"name":"Autistic Brother","message":"*The%20students%20stare%20silently%20at%20you%2C%20some%20starting%20to%20look%20rather%20guilty.%20Most%20of%20them%20have%20never%20seen%20this%20side%20of%20you%20before%2C%20and%20they%20don't%20quite%20know%20how%20to%20react.%20The%20teacher%20looks%20both%20embarrassed%20and%20ashamed.*%0A%0ATeacher%3A%20I-I%20see...%20I%20apologize%2C%20I%20had%20no%20idea.%20I'll...%20I'll%20try%20to%20be%20more%20mindful%20of%20his%20condition%20and%20allow%20the%20use%20of%20earplugs%20in%20class."},{"isUser":true,"name":"Lunita","message":"Y%20usted!%0A%0Aes%20su%20maldita%20obligaci%C3%B3n%20mandar%20a%20callar%20a%20los%20alumnos!%0A%0APara%20que%20los%20que%20tienen%20problemas%20de%20concentraci%C3%B3n%20etc%20no%20la%20pasen%20mal!!"},{"isUser":false,"name":"Autistic Brother","message":"*The%20teacher%20nods%2C%20still%20looking%20ashamed%20and%20embarrassed.*%0A%0ATeacher%3A%20Y-You're%20right...%20It's%20my%20responsibility%20to%20maintain%20a%20classroom%20environment%20conducive%20to%20learning%20for%20all%20students%2C%20and%20I%20should%20have%20been%20more%20attentive%20to%20Shino's%20needs...%20I'll%20be%20sure%20to%20address%20issues%20of%20disruption%20and%20maintain%20a%20quieter%20classroom%20going%20forward."}]}]}`);
+
+            // If history is 1 length long, that means we don't need drawer to switch
+            // Also means this can be conversation download
+            if (historyData.history.length < 2) {
+                openDrawerBtn.remove();
+            }
+
+            // Write character name on top
+            document.querySelector('.character_name-cont h3').textContent = historyData.charName;
+
+            // Get elements for future use
+            const historyList = document.getElementById('history_list');
+            const chat = document.getElementById('chat');
+            const msgItemTemplate = document.getElementById('message_item_template');
+
+            // Get and write the first chat
+            const openChat = (index) => {
+                chat.innerHTML = "";
+                historyData.history[index].chat.forEach(msg => {
+                    const clone = msgItemTemplate.content.cloneNode(true);
+
+                    // Check avatar
+                    const avatarGood = (msg.isUser && historyData.userPic) || (!msg.isUser && historyData.charPic);
+                    const avatar = avatarGood
+                        ? document.createElement('img')
+                        : document.createElement('div');
+                    if (avatarGood) {
+                        avatar.src = msg.isUser ? historyData.userPic : historyData.charPic;
+                    } else {
+                        avatar.classList.add(msg.isUser ? 'no_avatar-user' : 'no_avatar-char');
+                    }
+                    clone.querySelector('.avatar-wrap').appendChild(avatar);
+
+                    // Write content
+                    clone.querySelector('.chat_content-wrap h5').textContent = msg.name;
+                    clone.querySelector('.message-wrap p').innerHTML = parseMessageText(decodeURIComponent(msg.message));
+                    chat.appendChild(clone);
+                });
+            }
+            openChat(0);
+
+            // Get and write chat list in the drawer
+            historyData.history.forEach((chat, index) => {
+                const historyItem = document.createElement('div');
+                historyItem.classList.add('history_item');
+                // Open chat when clicked
+                historyItem.addEventListener('click', () => {
+                    openChat(index);
+                    closeDrawer();
+                });
+                const historyContent = document.createElement('p');
+                historyContent.innerHTML = `<span class="chat-date">${formatDate(chat.date)}</span><br /><br />` + parseMessageText(decodeURIComponent(chat.chat[chat.chat.length - 1].message));
+                historyItem.appendChild(historyContent);
+                historyList.appendChild(historyItem);
+            });
+
+            function parseMessageText(message) {
+                // Replace ***text*** with bold-italic
+                message = message.replace(/\*\*\*([\s\S]*?)\*\*\*/g, '<span class="bold-italic">$1</span>');
+                // Replace **text** with bold
+                message = message.replace(/\*\*([\s\S]*?)\*\*/g, '<span class="bold">$1</span>');
+                // Replace *text* with italic
+                message = message.replace(/\*([\s\S]*?)\*/g, '<span class="italic">$1</span>');
+                // Replace newline (\n) with line break (<br>)
+                message = message.replace(/\n/g, '<br>');
+                return message;
+            }
+
+            function formatDate(dateString) {
+                const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+                const date = new Date(dateString);
+                const year = date.getFullYear();
+                const monthIndex = date.getMonth();
+                const monthName = months[monthIndex];
+                const day = String(date.getDate()).padStart(2, '0');
+                const hour = String(date.getHours()).padStart(2, '0');
+                const minute = String(date.getMinutes()).padStart(2, '0');
+
+                return `${year} ${monthName} ${day} - ${hour}:${minute}`;
+            }
+        }, false);
+    </script>
+
+</body>
+
+</html>
